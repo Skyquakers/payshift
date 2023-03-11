@@ -1,6 +1,6 @@
 declare module "payshift"
 
-type ChargeObject = {
+declare type ChargeObject = {
   title: string,
   amount: number,
   outTradeNo: string,
@@ -18,3 +18,19 @@ type ClassImplements<
 
 
 declare const PaymentProvider: ClassImplements<IPaymentProvidable, []>
+
+
+declare enum PayshiftEventName {
+  PaymentIntentSucceeded = 'payment_intent.succeeded',
+  PaymentIntentCreated = 'payment_intent.created',
+  ChargeSucceeded = 'charge.succeeded',
+  ChargeCreated = 'charge.created',
+  ChargeFailed = 'charge.failed',
+}
+
+declare type PayshiftEvent = {
+  amount: number,
+  title: string,
+  outTradeNo: string,
+  tradeNo: string,
+}

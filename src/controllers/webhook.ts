@@ -1,6 +1,5 @@
-import { Request, Response, NextFunction } from 'express'
+import { trigger } from "../event"
 
-
-export const onAlipayChargeSucceeded = async function (req: Request, res: Response, next: NextFunction) {
-  return {}
+export const onAlipayChargeSucceeded = async function (object: PayshiftEvent) {
+  trigger(PayshiftEventName.ChargeSucceeded, object)
 }
