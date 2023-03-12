@@ -1,5 +1,5 @@
 import { trigger } from "../event"
 
-export const onAlipayChargeSucceeded = async function (object: PayshiftEvent) {
+export const onChargeSucceeded = function (object: PayshiftEvent) {
   trigger(PayshiftEventName.ChargeSucceeded, object)
 }
