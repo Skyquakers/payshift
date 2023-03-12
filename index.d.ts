@@ -5,6 +5,7 @@ declare type ChargeObject = {
   amount: number,
   outTradeNo: string,
   description?: string,
+  tradeNo?: string,
 }
 
 declare interface IPaymentProvidable {
