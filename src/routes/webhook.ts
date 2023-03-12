@@ -1,7 +1,8 @@
 import { Router } from "express"
-import { onAlipayChargeSucceeded } from "../controllers/webhook"
 import { EventModel } from "../models/event"
 import { Types } from 'mongoose'
+import { onChargeSucceeded } from "../controllers/webhook"
+
 
 export const router = Router()
 
@@ -17,7 +18,7 @@ router.post('/alipay', async function (req, res, next) {
       out_trade_no,
       subject } = req.body      
     if (['TRADE_SUCCESS', 'TRADE_FINISHED'].includes(trade_status)) {
-      onAlipayChargeSucceeded({
+      onChargeSucceeded({
         amount: total_amount,
         tradeNo: trade_no,
         outTradeNo: out_trade_no,

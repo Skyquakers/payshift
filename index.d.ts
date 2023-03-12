@@ -29,9 +29,16 @@ declare enum PayshiftEventName {
   ChargeFailed = 'charge.failed',
 }
 
+declare enum PayshiftProviderName {
+  Alipay = 'alipay',
+  WechatPay = 'wechat_pay',
+  Stripe = 'stripe',
+}
+
 declare type PayshiftEvent = {
   amount: number,
   title: string,
   outTradeNo: string,
   tradeNo: string,
+  provider?: PayshiftProviderName,
 }
