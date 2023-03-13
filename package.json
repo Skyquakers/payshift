@@ -6,7 +6,7 @@
   "scripts": {
     "test": "npm run build && npx mocha dist/test/*",
     "build": "npx tsc",
-    "dev": "npx ts-node src/index.ts",
+    "dev": "npx ts-node src/dev.ts",
     "start": "node dist/index.js"
   },
   "author": "",
@@ -28,6 +28,7 @@
     "@typescript-eslint/eslint-plugin": "^5.54.1",
     "@typescript-eslint/parser": "^5.54.1",
     "chai": "^4.3.7",
+    "chai-http": "^4.3.0",
     "eslint": "^8.35.0",
     "mocha": "^10.2.0",
     "sinon": "^15.0.1",

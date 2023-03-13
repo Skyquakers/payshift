@@ -1,4 +1,7 @@
 {
+  "ts-node": {
+    "files": true
+  },
   "extends": "@tsconfig/node16/tsconfig.json",
   "include": ["src/**/*", "test/**/*", "index.d.ts"],
   "exclude": ["node_modules"],

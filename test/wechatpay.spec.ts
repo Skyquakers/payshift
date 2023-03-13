@@ -6,7 +6,7 @@ import { privateKeyPath, publicKeyPath, appId, mcid, apiKey } from "../src/confi
 const provider = new WechatPayProvider(appId, mcid, publicKeyPath, privateKeyPath, apiKey)
 
 describe('WechatPayProvider', function () {
-  it('generate mobile payment link', async function () {
+  it('mobile payment link should be a string', async function () {
     const out_trade_no = 'ALIPfdf1211sdfsd12gfddsgs3'
     const subject = 'abc'
     const total_amount = 1
@@ -21,7 +21,7 @@ describe('WechatPayProvider', function () {
     expect(url).to.be.a('string')
   })
 
-  it('generate qrcode url', async function () {
+  it('qrcode url should be a string', async function () {
     const out_trade_no = 'ALIPfdf1211sdfsd12gfddsgs4'
     const subject = 'abc'
     const total_amount = 1

@@ -5,7 +5,7 @@ import { privateKeyPath, alipayPublicKeyPath, appId } from "../src/configs/alipa
 const provider = new AlipayProvider(appId, privateKeyPath, alipayPublicKeyPath)
 
 describe('AlipayProvider', function () {
-  it('generate desktop payment link', async function () {
+  it('desktop payment link should be a string', async function (done) {
     const out_trade_no = 'ALIPfdf1211sdfsd12gfddsgs3'
     const subject = 'abc'
     const body = '234'
@@ -20,9 +20,10 @@ describe('AlipayProvider', function () {
     }, return_url)
 
     expect(url).to.be.a('string')
+    done()
   })
 
-  it('generate mobile payment link', async function () {
+  it('mobile payment link should be a string', async function (done) {
     const out_trade_no = 'ALIPfdf1211sdfsd12gfddsgs3'
     const subject = 'abc'
     const total_amount = 1
@@ -35,5 +36,6 @@ describe('AlipayProvider', function () {
     }, return_url)
 
     expect(url).to.be.a('string')
+    done()
   })
 })

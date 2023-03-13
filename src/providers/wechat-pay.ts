@@ -3,7 +3,8 @@ import { readFileSync } from 'fs'
 
 
 export class WechatPayProvider implements IPaymentProvidable {
-  private sdk: WxPay
+  public sdk: WxPay
+  public name: PayshiftProviderName = 'wechat_pay'
 
   constructor (appId: string, mchid: string, publicKeyPath: string, privateKeyPath: string, apikey: string) {
     this.sdk = new WxPay({

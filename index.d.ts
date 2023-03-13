@@ -9,6 +9,8 @@ declare type ChargeObject = {
 }
 
 declare interface IPaymentProvidable {
+  name: PayshiftProviderName;
+  sdk: AlipaySdk | WxPay;
 }
 
 
@@ -21,24 +23,12 @@ type ClassImplements<
 declare const PaymentProvider: ClassImplements<IPaymentProvidable, []>
 
 
-declare enum PayshiftEventName {
-  PaymentIntentSucceeded = 'payment_intent.succeeded',
-  PaymentIntentCreated = 'payment_intent.created',
-  ChargeSucceeded = 'charge.succeeded',
-  ChargeCreated = 'charge.created',
-  ChargeFailed = 'charge.failed',
-}
+declare type PayshiftEventName = 'payment_intent.succeeded' | 'payment_intent.created' |
+'charge.succeeded' | 'charge.created' | 'charge.failed'
 
-declare enum PayshiftProviderName {
-  Alipay = 'alipay',
-  WechatPay = 'wechat_pay',
-  Stripe = 'stripe',
-}
+declare type PayshiftProviderName = 'alipay' | 'wechat_pay' | 'stripe'
 
-declare type PayshiftEvent = {
-  amount: number,
-  title: string,
-  outTradeNo: string,
-  tradeNo: string,
-  provider?: PayshiftProviderName,
+
+declare type PayshiftOptions = {
+  usedb?: boolean,
 }

@@ -1,4 +1,15 @@
+import { CurrencyCode } from "./currency"
+
 export const callbacks:  Map<string, Function[]> = new Map()
+
+type PayshiftEvent = {
+  amount: number, // in cents
+  title: string,
+  outTradeNo: string,
+  tradeNo: string,
+  provider: PayshiftProviderName,
+  currency: CurrencyCode,
+}
 
 
 export const register = function (event: PayshiftEventName, callback: Function) {

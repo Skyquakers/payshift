@@ -1,4 +1,4 @@
-import { Schema, Types, Model } from "mongoose"
+import { Schema, Types, model } from "mongoose"
 
 
 const eventSchema = new Schema({
@@ -20,7 +20,6 @@ const eventSchema = new Schema({
   },
   name: {
     type: String,
-    enum: PayshiftEventName,
     required: true
   },
   settled: {
@@ -30,4 +29,4 @@ const eventSchema = new Schema({
 })
 
 
-export const EventModel = new Model('Event', eventSchema)
+export const EventModel = model('Event', eventSchema)

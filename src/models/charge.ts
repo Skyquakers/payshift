@@ -1,4 +1,4 @@
-import { Schema, Types, Model } from "mongoose"
+import { Schema, Types, model } from "mongoose"
 
 
 const chargeSchema = new Schema({
@@ -25,4 +25,4 @@ const chargeSchema = new Schema({
 })
 
 
-export const chargeModel = new Model('Charge', chargeSchema)
+export const chargeModel = model('Charge', chargeSchema)

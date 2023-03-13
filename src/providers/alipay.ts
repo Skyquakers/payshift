@@ -2,7 +2,8 @@ import AlipaySdk from "alipay-sdk"
 import { readFileSync } from "fs"
 
 export class AlipayProvider implements IPaymentProvidable {
-  private sdk: AlipaySdk
+  public sdk: AlipaySdk
+  public name: PayshiftProviderName = 'alipay'
 
   constructor (appId: string, privateKeyPath: string, alipayPublicKeyPath: string) {
     this.sdk = new AlipaySdk({

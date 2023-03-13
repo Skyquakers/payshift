@@ -1,8 +1,16 @@
 version: "3.9"
 services:
   webserver:
+    depends_on:
+      - mongodb
     build: .
     ports:
       - "8000:3000"
+
   mongodb:
     image: "mongo:latest"
+    volumes:
+      - db:/data/db
+
+volumes:
+  db:
