@@ -12,10 +12,18 @@ unified payment api for multiple payment processors
 ## Usage
 
 ```
-import { AlipayProvider } from 'payshift'
+import { Payshift, AlipayProvider, StripeProvider, WechatPayProvider } from "payshift"
+import { privateKeyPath, alipayPublicKeyPath, appId } from "your alipay config"
+import { testKey, endpointSecret } from "your stripe config"
+import { apiKey, mcid, publicKeyPath } from "your wechatpay config"
 
-const provider = AlipayProvider()
-const url = await provider.createPaymentLink()
+const alipay = new AlipayProvider(appId, privateKeyPath, alipayPublicKeyPath)
+const stripe = new StripeProvider(testKey)
+const wechat = new WechatPayProvider(appId, mcid, publicKeyPath, privateKeyPath, apiKey)
 
-// go to url to finish payment
+const payshift = new Payshift([alipay, stripe, wechat], {
+  stripeEndpointSecret: endpointSecret
+})
+// webhooks server, used for notify_url for some payments
+payshift.startWebServer('http://localhost:3000', 3000)
 ```
