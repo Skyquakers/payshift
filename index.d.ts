@@ -10,7 +10,8 @@ declare type ChargeObject = {
 
 declare interface IPaymentProvidable {
   name: PayshiftProviderName;
-  sdk: AlipaySdk | WxPay;
+  sdk: AlipaySdk | WxPay | Stripe;
+  webhookEndpoint?: string,
 }
 
 
@@ -24,11 +25,15 @@ declare const PaymentProvider: ClassImplements<IPaymentProvidable, []>
 
 
 declare type PayshiftEventName = 'payment_intent.succeeded' | 'payment_intent.created' |
-'charge.succeeded' | 'charge.created' | 'charge.failed'
+'charge.succeeded' | 'charge.created' | 'charge.failed' |
+'account.updated' | 'account.application.deauthorized' | 'account.external_account.updated' |
+'balance.available' |
+'payout.failed'
 
 declare type PayshiftProviderName = 'alipay' | 'wechat_pay' | 'stripe'
 
 
 declare type PayshiftOptions = {
   usedb?: boolean,
+  stripeEndpointSecret?: string,
 }

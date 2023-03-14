@@ -1,0 +1,38 @@
+import { NextFunction, Request, Response } from "express"
+import Stripe from "stripe"
+import { trigger } from "../event-handler"
+
+
+export const onStripeEvent = async function (req: Request, res: Response, next: NextFunction) {
+  const sig = req.headers['stripe-signature'] as string
+  const sdk = res.locals.stripe?.sdk as Stripe
+  let event
+
+  try {
+    event = await sdk.webhooks.constructEventAsync(req.body, sig, res.locals.endpointSecret)
+  } catch (err) {
+    let message = ''
+    if (err instanceof Error) {
+      message = `Webhook Error: ${err.message}`
+    } else {
+      message = 'Webhook Error, unknown error'
+    }
+    console.error(err)
+    return res.status(400).send(message)
+  }
+
+  if (event.type === 'account.updated') {
+    const account = event.data.object as Stripe.Account
+    if (account.details_submitted) {
+      trigger('account.updated', {
+        name: 'account.updated',
+        accountId: account.id,
+        provider: 'stripe',
+      })
+    }
+  }
+
+  res.json({
+    received: true
+  })
+}

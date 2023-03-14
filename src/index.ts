@@ -8,12 +8,14 @@ export class Payshift {
   private dbUsed: boolean
   private providers: IPaymentProvidable[]
   private webServerStarted: boolean
+  private stripeEndpointSecret?: string
 
   constructor (providers: IPaymentProvidable[] = [], options: PayshiftOptions = {}) {
     this.providers = providers
     this.dbUsed = false
     this.webserver = express()
     this.webServerStarted = false
+    this.stripeEndpointSecret = options.stripeEndpointSecret
   }
 
   public async usedb(connectionString: string = 'mongodb://mongodb:27017/payshift') {
@@ -22,6 +24,13 @@ export class Payshift {
       await mongoose.connect(connectionString)
       this.dbUsed = true
       console.log('mongodb connected')
+
+      if (this.webServerStarted) {
+        this.webserver.use(function (req, res, next) {
+          res.locals.dbUsed = true
+          next()
+        })
+      }
     } catch (err) {
       console.error(err)
     }
@@ -29,10 +38,16 @@ export class Payshift {
 
   public async startWebServer (hostname: string, localPort: number) {
     for (const provider of this.providers.values()) {
-      this.webserver.use(function (req, res, next) {
+      this.webserver.use((req, res, next) => {
         if (provider.name === 'alipay') {
           res.locals.alipay = provider
         } else if (provider.name === 'stripe') {
+          if (this.stripeEndpointSecret) {
+            res.locals.endpointSecret = this.stripeEndpointSecret         
+          } else {
+            throw new Error('miss stripeEndpointSecret in constructor options')
+          }
+
           res.locals.stripe = provider
         } else if (provider.name === 'wechat_pay') {
           res.locals.wechatPay = provider
@@ -48,6 +63,7 @@ export class Payshift {
 
     this.webserver.use(function (req, res, next) {
       res.locals.hostname = hostname
+      next()
     })
 
     this.webServerStarted = true
