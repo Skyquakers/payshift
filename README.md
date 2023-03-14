@@ -11,7 +11,7 @@ unified payment api for multiple payment processors
 
 ## Usage
 
-```
+```javascript
 import { Payshift, AlipayProvider, StripeProvider, WechatPayProvider } from "payshift"
 import { privateKeyPath, alipayPublicKeyPath, appId } from "your alipay config"
 import { testKey, endpointSecret } from "your stripe config"
