@@ -1,8 +1,7 @@
 import chai, { expect } from "chai"
-import { Payshift } from "../src/index"
 import chaiHttp from 'chai-http'
-import { AlipayProvider } from "../src/providers/alipay.js"
-import { privateKeyPath, alipayPublicKeyPath, appId } from "../src/configs/alipay.js"
+import { AlipayProvider, Payshift } from "../src/index"
+import { privateKeyPath, alipayPublicKeyPath, appId } from "../src/configs/alipay"
 
 
 chai.use(chaiHttp)

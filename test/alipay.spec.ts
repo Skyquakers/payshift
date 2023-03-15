@@ -1,6 +1,6 @@
 import { expect } from "chai"
-import { AlipayProvider } from "../src/providers/alipay.js"
-import { privateKeyPath, alipayPublicKeyPath, appId } from "../src/configs/alipay.js"
+import { AlipayProvider, CurrencyCode } from "../src/index"
+import { privateKeyPath, alipayPublicKeyPath, appId } from "../src/configs/alipay"
 
 const provider = new AlipayProvider(appId, privateKeyPath, alipayPublicKeyPath)
 
@@ -10,14 +10,16 @@ describe('AlipayProvider', function () {
     const subject = 'abc'
     const body = '234'
     const total_amount = 1
-    const return_url = 'http://taobao.com'
 
     const url = await provider.createDesktopPaymentLink({
       outTradeNo: out_trade_no,
       title: subject,
       description: body,
       amount: total_amount,
-    }, return_url)
+      channel: 'alipay_web',
+      currency: CurrencyCode.CNY,
+      returnUrl: 'http://taobao.com'
+    })
 
     expect(url).to.be.a('string')
     done()
@@ -27,13 +29,15 @@ describe('AlipayProvider', function () {
     const out_trade_no = 'ALIPfdf1211sdfsd12gfddsgs3'
     const subject = 'abc'
     const total_amount = 1
-    const return_url = 'http://taobao.com'
 
     const url = await provider.createMobilePaymentLink({
       outTradeNo: out_trade_no,
       title: subject,
       amount: total_amount,
-    }, return_url)
+      channel: 'alipay_web',
+      currency: CurrencyCode.CNY,
+      returnUrl: 'http://taobao.com'
+    })
 
     expect(url).to.be.a('string')
     done()

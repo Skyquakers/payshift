@@ -1,5 +1,5 @@
 import { expect } from "chai"
-import { StripeProvider } from "../src/providers/stripe"
+import { StripeProvider } from "../src/index"
 import { testKey } from "../certs/stripe/secret"
 
 

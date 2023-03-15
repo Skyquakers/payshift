@@ -21,6 +21,14 @@ const chargeSchema = new Schema({
   description: {
     type: String,
     required: false,
+  },
+  currency: {
+    type: String,
+    required: true,
+  },
+  channel: {
+    type: String,
+    required: true,
   }
 })
 

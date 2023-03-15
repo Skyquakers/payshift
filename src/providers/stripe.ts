@@ -1,4 +1,5 @@
 import Stripe from "stripe"
+import { CurrencyCode } from "../currency"
 
 
 export class StripeProvider implements IPaymentProvidable {
@@ -25,5 +26,22 @@ export class StripeProvider implements IPaymentProvidable {
     })
 
     return result.url
+  }
+
+  public async createPaymentIntent (params: Stripe.PaymentIntentCreateParams) {
+    const paymentIntent = await this.sdk.paymentIntents.create(params)
+    return paymentIntent
+  }
+
+  public async transferTo (accountId: string, options: {
+    currency: CurrencyCode,
+    amount: number,
+    transferGroup?: string,
+  }): Promise<Stripe.Transfer> {
+    return await this.sdk.transfers.create({
+      destination: accountId,
+      currency: options.currency,
+      transfer_group: options.transferGroup,
+    })
   }
 }

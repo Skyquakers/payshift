@@ -16,11 +16,11 @@ export class WechatPayProvider implements IPaymentProvidable {
     })
   }
 
-  public async createMobilePaymentLink (charge: ChargeObject, returnUrl: string): Promise<string> {
+  public async createMobilePaymentLink (charge: ChargeCreateParams, notifyUrl: string): Promise<string> {
     const params = {
       description: charge.title,
       out_trade_no: charge.outTradeNo,
-      notify_url: returnUrl,
+      notify_url: notifyUrl,
       amount: {
         total: charge.amount,
       },
@@ -41,11 +41,11 @@ export class WechatPayProvider implements IPaymentProvidable {
     throw new Error(`wechat pay launch fails, code ${result.status} ${result.code}, ${result.message}`)
   }
 
-  public async createPaymentQrcodeUrl (charge: ChargeObject, returnUrl: string) {
+  public async createPaymentQrcodeUrl (charge: ChargeCreateParams, notifyUrl: string) {
     const params = {
       description: charge.title,
       out_trade_no: charge.outTradeNo,
-      notify_url: returnUrl,
+      notify_url: notifyUrl,
       amount: {
         total: charge.amount,
       },

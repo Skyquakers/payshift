@@ -1,5 +1,5 @@
 import { expect } from "chai"
-import { WechatPayProvider } from "../src/providers/wechat-pay"
+import { CurrencyCode, WechatPayProvider } from "../src/index"
 import { privateKeyPath, publicKeyPath, appId, mcid, apiKey } from "../src/configs/wechat-pay"
 
 
@@ -16,6 +16,8 @@ describe('WechatPayProvider', function () {
       outTradeNo: out_trade_no,
       title: subject,
       amount: total_amount,
+      provider: 'wechat_pay',
+      currency: CurrencyCode.CNY,
     }, return_url)
 
     expect(url).to.be.a('string')
@@ -31,6 +33,8 @@ describe('WechatPayProvider', function () {
       outTradeNo: out_trade_no,
       title: subject,
       amount: total_amount,
+      provider: 'wechat_pay',
+      currency: CurrencyCode.CNY,
     }, return_url)
 
     expect(url).to.be.a('string')

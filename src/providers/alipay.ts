@@ -14,32 +14,32 @@ export class AlipayProvider implements IPaymentProvidable {
     })
   }
 
-  public async createDesktopPaymentLink (charge: ChargeObject, returnUrl: string): Promise<string> {
+  public async createDesktopPaymentLink (params: ChargeCreateParams): Promise<string> {
     const result = this.sdk.pageExec('alipay.trade.page.pay', {
       method: 'GET',
       bizContent: {
-        out_trade_no: charge.outTradeNo,
+        out_trade_no: params.outTradeNo,
         product_code: 'FAST_INSTANT_TRADE_PAY',
-        subject: charge.title,
-        body: charge.description,
-        total_amount: String(charge.amount / 100),
+        subject: params.title,
+        body: params.description,
+        total_amount: String(params.amount / 100),
       },
-      return_url: returnUrl
+      return_url: params.returnUrl
     })
 
     return result
   }
 
-  public async createMobilePaymentLink (charge: ChargeObject, returnUrl: string): Promise<string> {
+  public async createMobilePaymentLink (params: ChargeCreateParams): Promise<string> {
     const result = this.sdk.pageExec('alipay.trade.wap.pay', {
       method: 'GET',
       bizContent: {
-        out_trade_no: charge.outTradeNo,
+        out_trade_no: params.outTradeNo,
         product_code: 'QUICK_WAP_WAY',
-        subject: charge.title,
-        total_amount: String(charge.amount / 100),
+        subject: params.title,
+        total_amount: String(params.amount / 100),
       },
-      return_url: returnUrl
+      return_url: params.returnUrl
     })
 
     return result

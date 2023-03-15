@@ -1,11 +1,28 @@
 declare module "payshift"
 
+declare type ChargeCreateParams = {
+  title: string,
+  amount: number,
+  outTradeNo: string,
+  currency: CurrencyCode,
+  returnUrl: string,
+  channel: PayshiftChannel,
+  description?: string,
+}
+
 declare type ChargeObject = {
   title: string,
   amount: number,
   outTradeNo: string,
+  channel: PayshiftChannel,
   description?: string,
   tradeNo?: string,
+  currency: CurrencyCode,
+}
+
+declare type ChargeResponse = {
+  charge: ChargeObject,
+  data: any
 }
 
 declare interface IPaymentProvidable {
@@ -30,7 +47,12 @@ declare type PayshiftEventName = 'payment_intent.succeeded' | 'payment_intent.cr
 'balance.available' |
 'payout.failed'
 
-declare type PayshiftProviderName = 'alipay' | 'wechat_pay' | 'stripe'
+
+declare type PayshiftProviderName = 'alipay' | 'wechat_pay' | 'stripe' | 'paymentcloud' | 'shift4' | 'paxum'
+
+
+declare type PayshiftChannel = 'stripe_web' | 'alipay_web' | 'wechat_qrcode' |
+'wechat_mobile_web' | 'alipay_mobile_web'
 
 
 declare type PayshiftOptions = {
