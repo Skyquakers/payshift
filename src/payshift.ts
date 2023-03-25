@@ -1,6 +1,6 @@
 import express, { Express } from 'express'
 import { router as webhookRouter } from './routes/webhook'
-import { register } from './event-handler'
+import { register, unregister } from './event-handler'
 import mongoose, { Types } from 'mongoose'
 import { AlipayProvider, StripeProvider, WechatPayProvider } from './index'
 import { chargeModel } from './models/charge'
@@ -90,6 +90,10 @@ export class Payshift {
     }
 
     register(event, callback)
+  }
+
+  public off(event: PayshiftEventName, callback: Function) {
+    unregister(event, callback)
   }
 
   public async createCharge (params: ChargeCreateParams): Promise<ChargeResponse> {
