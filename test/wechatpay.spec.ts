@@ -16,8 +16,9 @@ describe('WechatPayProvider', function () {
       outTradeNo: out_trade_no,
       title: subject,
       amount: total_amount,
-      provider: 'wechat_pay',
+      channel: 'wechat_mobile_web',
       currency: CurrencyCode.CNY,
+      returnUrl: return_url,
     }, return_url)
 
     expect(url).to.be.a('string')
@@ -33,8 +34,9 @@ describe('WechatPayProvider', function () {
       outTradeNo: out_trade_no,
       title: subject,
       amount: total_amount,
-      provider: 'wechat_pay',
+      channel: 'wechat_qrcode',
       currency: CurrencyCode.CNY,
+      returnUrl: return_url,
     }, return_url)
 
     expect(url).to.be.a('string')

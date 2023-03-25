@@ -28,6 +28,10 @@ export class StripeProvider implements IPaymentProvidable {
     return result.url
   }
 
+  public async createCustomer (params: Stripe.CustomerCreateParams): Promise<Stripe.Customer> {
+    return await this.sdk.customers.create(params)
+  }
+
   public async createPaymentIntent (params: Stripe.PaymentIntentCreateParams) {
     const paymentIntent = await this.sdk.paymentIntents.create(params)
     return paymentIntent
