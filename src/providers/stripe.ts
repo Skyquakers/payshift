@@ -48,4 +48,8 @@ export class StripeProvider implements IPaymentProvidable {
       transfer_group: options.transferGroup,
     })
   }
+
+  public async getAccount (params: Stripe.AccountRetrieveParams): Promise<Stripe.Account> {
+    return await this.sdk.accounts.retrieve(params)
+  }
 }
