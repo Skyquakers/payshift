@@ -2,7 +2,7 @@
   "name": "payshift",
   "version": "1.0.0",
   "description": "unified payment api for multiple payment processors",
-  "main": "dist/index.js",
+  "main": "dist/src/index.js",
   "typings": "index.d.ts",
   "scripts": {
     "test": "npm run build && npx mocha dist/test/* --timeout 10000",
