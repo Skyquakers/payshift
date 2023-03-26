@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "unified payment api for multiple payment processors",
   "main": "dist/index.js",
-  "types": "index.d.ts",
+  "typings": "index.d.ts",
   "scripts": {
     "test": "npm run build && npx mocha dist/test/* --timeout 10000",
     "build": "npx tsc",

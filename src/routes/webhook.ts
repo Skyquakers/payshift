@@ -5,7 +5,7 @@ import { onStripeEvent } from "../controllers/webhook-stripe"
 import bodyParser from "body-parser"
 
 
-export const router = Router()
+export const router: Router = Router()
 
 router.post('/alipay', onAlipayEvent)
       .get('/alipay', onAlipayEvent)
