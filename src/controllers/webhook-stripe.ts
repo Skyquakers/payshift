@@ -23,7 +23,7 @@ export const onStripeEvent = async function (req: Request, res: Response, next: 
 
   if (event.type === 'account.updated') {
     const account = event.data.object as Stripe.Account
-    if (account.details_submitted) {
+    if (account.payouts_enabled) {
       trigger('account.updated', {
         name: 'account.updated',
         accountId: account.id,

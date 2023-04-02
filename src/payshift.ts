@@ -1,7 +1,7 @@
 import express, { Express } from 'express'
 import { router as webhookRouter } from './routes/webhook'
 import { register, unregister } from './event-handler'
-import mongoose, { Types } from 'mongoose'
+import mongoose, { SchemaTypes, Types } from 'mongoose'
 import { AlipayProvider, StripeProvider, WechatPayProvider } from './index'
 import { chargeModel } from './models/charge'
 
@@ -97,59 +97,65 @@ export class Payshift {
   }
 
   public async createCharge (params: ChargeCreateParams): Promise<ChargeResponse> {
-    const charge = new chargeModel({
-      amount: new Types.Decimal128(String(params.amount)),
+    const chargeObj: ChargeObject = {
+      amount: params.amount,
       title: params.title,
       outTradeNo: params.outTradeNo,
       channel: params.channel,
       currency: params.currency,
-    })
-    await charge.save()
+    }
 
-    if (charge.channel === 'stripe_web') {
+    if (this.dbUsed) {
+      const chargeObjectCopy = JSON.parse(JSON.stringify(chargeObj))
+      chargeObjectCopy.amount = new SchemaTypes.Decimal128(String(chargeObjectCopy.amount))
+      const charge = new chargeModel(chargeObjectCopy)
+      await charge.save()
+    }
+
+    if (chargeObj.channel === 'stripe_web') {
       const provider = this.getProvider('stripe') as StripeProvider
       const paymentIntent = await provider.createPaymentIntent({
         automatic_payment_methods: {
           enabled: true,
         },
-        currency: charge.currency,
+        currency: chargeObj.currency.toLowerCase(),
         amount: params.amount,
       })
 
       return {
-        charge: charge.toObject(),
+        charge: chargeObj,
         data: paymentIntent.client_secret
       }
-    } else if (charge.channel === 'alipay_web') {
+    } else if (chargeObj.channel === 'alipay_web') {
       const provider = this.getProvider('alipay') as AlipayProvider
       const url = await provider.createDesktopPaymentLink(params)
       return {
-        charge: charge.toObject(),
+        charge: chargeObj,
         data: url
       }
-    } else if (charge.channel === 'alipay_mobile_web') {
+    } else if (chargeObj.channel === 'alipay_mobile_web') {
       const provider = this.getProvider('alipay') as AlipayProvider
       const url = await provider.createMobilePaymentLink(params)
       return {
-        charge: charge.toObject(),
+        charge: chargeObj,
         data: url
       }
-    } else if (charge.channel === 'wechat_mobile_web') {
+    } else if (chargeObj.channel === 'wechat_mobile_web') {
       const provider = this.getProvider('wechat_pay') as WechatPayProvider
       const url = await provider.createMobilePaymentLink(params, `${this.hostname}/webhooks/wechat_pay`)
       return {
-        charge: charge.toObject(),
+        charge: chargeObj,
         data: url
       }
-    } else if (charge.channel === 'wechat_qrcode') {
+    } else if (chargeObj.channel === 'wechat_qrcode') {
       const provider = this.getProvider('wechat_pay') as WechatPayProvider
       const url = await provider.createPaymentQrcodeUrl(params, `${this.hostname}/webhooks/wechat_pay`)
       return {
-        charge: charge.toObject(),
+        charge: chargeObj,
         data: url
       }
     }
 
-    throw new Error(`unknown channel ${charge.channel}`)
+    throw new Error(`unknown channel ${chargeObj.channel}`)
   }
 }

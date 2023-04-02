@@ -52,4 +52,22 @@ export class StripeProvider implements IPaymentProvidable {
   public async getAccount (params: Stripe.AccountRetrieveParams): Promise<Stripe.Account> {
     return await this.sdk.accounts.retrieve(params)
   }
+
+  public async getBankAccounts (accountId: string): Promise<Array<Stripe.BankAccount | Stripe.Card>> {
+    const result = await this.sdk.accounts.listExternalAccounts(accountId, {
+      object: 'bank_account',
+      limit: 1
+    })
+
+    return result.data
+  }
+
+  public async getCards (accountId: string): Promise<Array<Stripe.BankAccount | Stripe.Card>> {
+    const result = await this.sdk.accounts.listExternalAccounts(accountId, {
+      object: 'card',
+      limit: 1
+    })
+
+    return result.data
+  }
 }
