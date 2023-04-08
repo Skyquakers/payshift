@@ -124,7 +124,7 @@ export class Payshift {
 
       return {
         charge: chargeObj,
-        data: paymentIntent.client_secret
+        data: paymentIntent
       }
     } else if (chargeObj.channel === 'alipay_web') {
       const provider = this.getProvider('alipay') as AlipayProvider

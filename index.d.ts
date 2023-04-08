@@ -5,7 +5,7 @@ declare type ChargeCreateParams = {
   amount: number,
   outTradeNo: string,
   currency: CurrencyCode,
-  returnUrl: string,
+  returnUrl?: string,
   channel: PayshiftChannel,
   description?: string,
 }

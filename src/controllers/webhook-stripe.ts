@@ -30,6 +30,15 @@ export const onStripeEvent = async function (req: Request, res: Response, next: 
         provider: 'stripe',
       })
     }
+  } else if (event.type === 'payment_intent.succeeded') {
+    const paymentIntent = event.data.object as Stripe.PaymentIntent
+    trigger('payment_intent.succeeded', {
+      name: 'payment_intent.succeeded',
+      provider: 'stripe',
+    }, paymentIntent)
+  } else {
+    console.log(event.type)
+    console.log(event.data)
   }
 
   res.json({

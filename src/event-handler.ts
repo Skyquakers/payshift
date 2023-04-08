@@ -27,8 +27,8 @@ export const register = function (event: PayshiftEventName, callback: Function) 
 export const trigger = function (event: PayshiftEventName, object: PayshiftEvent, ...args: any[]) {
   const fns = callbacks.get(event)
   if (fns) {
-    fns.forEach(fn => {
-      fn.call(null, object, ...args)
+    fns.forEach(async fn => {
+      await fn.call(null, object, ...args)
     })
   }
 }

@@ -46,6 +46,7 @@ export class StripeProvider implements IPaymentProvidable {
       destination: accountId,
       currency: options.currency,
       transfer_group: options.transferGroup,
+      amount: options.amount
     })
   }
 
@@ -69,5 +70,15 @@ export class StripeProvider implements IPaymentProvidable {
     })
 
     return result.data
+  }
+
+  public async getCharge (chargeId: string): Promise<Stripe.Charge> {
+    const result = await this.sdk.charges.retrieve(chargeId)
+    return result
+  }
+
+  public async getTransaction (txnId: string): Promise<Stripe.BalanceTransaction> {
+    const result = await this.sdk.balanceTransactions.retrieve(txnId)
+    return result
   }
 }
