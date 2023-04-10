@@ -21,25 +21,34 @@ export const onStripeEvent = async function (req: Request, res: Response, next: 
     return res.status(400).send(message)
   }
 
-  if (event.type === 'account.updated') {
-    const account = event.data.object as Stripe.Account
-    if (account.payouts_enabled) {
-      trigger('account.updated', {
-        name: 'account.updated',
-        accountId: account.id,
+  try {
+    if (event.type === 'account.updated') {
+      const account = event.data.object as Stripe.Account
+      if (account.payouts_enabled) {
+        trigger('account.updated', {
+          name: 'account.updated',
+          accountId: account.id,
+          provider: 'stripe',
+        })
+      }
+    } else if (event.type === 'payment_intent.succeeded') {
+      const paymentIntent = event.data.object as Stripe.PaymentIntent
+      trigger('payment_intent.succeeded', {
+        name: 'payment_intent.succeeded',
         provider: 'stripe',
-      })
+      }, paymentIntent)
+    } else {
+      console.log(event.type)
+      console.log(event.data)
     }
-  } else if (event.type === 'payment_intent.succeeded') {
-    const paymentIntent = event.data.object as Stripe.PaymentIntent
-    trigger('payment_intent.succeeded', {
-      name: 'payment_intent.succeeded',
-      provider: 'stripe',
-    }, paymentIntent)
-  } else {
-    console.log(event.type)
-    console.log(event.data)
+  } catch (err: any) {
+    if (err instanceof Error) {
+      return res.status(400).send(err.message)      
+    }
+
+    return res.status(400).json(err)
   }
+
 
   res.json({
     received: true

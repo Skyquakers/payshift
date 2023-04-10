@@ -81,4 +81,14 @@ export class StripeProvider implements IPaymentProvidable {
     const result = await this.sdk.balanceTransactions.retrieve(txnId)
     return result
   }
+
+  public async getLoginLink (accountId: string): Promise<Stripe.LoginLink> {
+    return await this.sdk.accounts.createLoginLink(accountId)
+  }
+
+  public async getBalance (accountId: string): Promise<Stripe.Balance> {
+    return await this.sdk.balance.retrieve({
+      stripeAccount: accountId
+    })
+  }
 }

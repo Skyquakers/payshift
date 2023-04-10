@@ -1,7 +1,7 @@
 import express, { Express } from 'express'
 import { router as webhookRouter } from './routes/webhook'
 import { register, unregister } from './event-handler'
-import mongoose, { SchemaTypes, Types } from 'mongoose'
+import mongoose, { SchemaTypes } from 'mongoose'
 import { AlipayProvider, StripeProvider, WechatPayProvider } from './index'
 import { chargeModel } from './models/charge'
 
