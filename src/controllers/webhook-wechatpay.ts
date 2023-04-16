@@ -6,10 +6,6 @@ import { EventModel } from "../models/event"
 import { apiKey } from "../configs/wechat-pay"
 
 
-type WehcatNotifyStatus = 'PAYSCORE.USER_OPEN_SERVICE' | 'PAYSCORE.USER_CLOSE_SERVICE' |
-  'PAYSCORE.USER_CONFIRM' | 'PAYSCORE.USER_PAID'
-
-
 // https://pay.weixin.qq.com/wiki/doc/api_external/ch/apis/chapter3_3_11.shtml
 export const onWechatPayEvent = async function (req: Request, res: Response, next: NextFunction) {
   try {
@@ -53,7 +49,7 @@ export const onWechatPayEvent = async function (req: Request, res: Response, nex
         outTradeNo: out_trade_no,
         title: service_introduction,
         currency: amount.payer_currency,
-        provider: 'alipay',
+        provider: 'wechat_pay',
         name,
       })
     }
@@ -64,7 +60,7 @@ export const onWechatPayEvent = async function (req: Request, res: Response, nex
         outTradeNo: out_trade_no,
         name,
         tradeNo: id,
-        amount: new Types.Decimal128(String(amount.payer_total))
+        amount: Number.parseInt(amount.payer_total, 10)
       })
       await event.save() 
     }

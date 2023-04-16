@@ -2,7 +2,7 @@ import { expect } from "chai"
 import { AlipayProvider, CurrencyCode } from "../src/index"
 import { privateKeyPath, alipayPublicKeyPath, appId } from "../src/configs/alipay"
 
-const provider = new AlipayProvider(appId, privateKeyPath, alipayPublicKeyPath)
+const provider = new AlipayProvider(appId, privateKeyPath, alipayPublicKeyPath, 'http://www.taobao.com')
 
 describe('AlipayProvider', function () {
   it('desktop payment link should be a string', async function (done) {

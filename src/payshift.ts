@@ -85,10 +85,6 @@ export class Payshift {
   }
 
   public on(event: PayshiftEventName, callback: Function) {
-    if (!this.webServerStarted) {
-      throw new Error('start web server then you can register events, call payshift.startWebServer()')
-    }
-
     register(event, callback)
   }
 
@@ -105,11 +101,12 @@ export class Payshift {
       currency: params.currency,
     }
 
+    let chargeId: string | undefined = undefined
     if (this.dbUsed) {
       const chargeObjectCopy = JSON.parse(JSON.stringify(chargeObj))
-      chargeObjectCopy.amount = new SchemaTypes.Decimal128(String(chargeObjectCopy.amount))
       const charge = new chargeModel(chargeObjectCopy)
-      await charge.save()
+      const savedCharge = await charge.save()
+      chargeId = savedCharge._id.toString()
     }
 
     if (chargeObj.channel === 'stripe_web') {
@@ -124,35 +121,40 @@ export class Payshift {
 
       return {
         charge: chargeObj,
-        data: paymentIntent
+        data: paymentIntent,
+        chargeId,
       }
     } else if (chargeObj.channel === 'alipay_web') {
       const provider = this.getProvider('alipay') as AlipayProvider
       const url = await provider.createDesktopPaymentLink(params)
       return {
         charge: chargeObj,
-        data: url
+        data: url,
+        chargeId,
       }
     } else if (chargeObj.channel === 'alipay_mobile_web') {
       const provider = this.getProvider('alipay') as AlipayProvider
       const url = await provider.createMobilePaymentLink(params)
       return {
         charge: chargeObj,
-        data: url
+        data: url,
+        chargeId,
       }
     } else if (chargeObj.channel === 'wechat_mobile_web') {
       const provider = this.getProvider('wechat_pay') as WechatPayProvider
       const url = await provider.createMobilePaymentLink(params, `${this.hostname}/webhooks/wechat_pay`)
       return {
         charge: chargeObj,
-        data: url
+        data: url,
+        chargeId,
       }
     } else if (chargeObj.channel === 'wechat_qrcode') {
       const provider = this.getProvider('wechat_pay') as WechatPayProvider
       const url = await provider.createPaymentQrcodeUrl(params, `${this.hostname}/webhooks/wechat_pay`)
       return {
         charge: chargeObj,
-        data: url
+        data: url,
+        chargeId,
       }
     }
 

@@ -56,7 +56,7 @@ export const onAlipayEvent = async function (req: Request, res: Response, next: 
         outTradeNo: out_trade_no,
         name,
         tradeNo: trade_no,
-        amount: new Types.Decimal128(total_amount)
+        amount: Number.parseInt(total_amount, 10)
       })
       await event.save() 
     }

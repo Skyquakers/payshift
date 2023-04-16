@@ -3,7 +3,7 @@ import { CurrencyCode, WechatPayProvider } from "../src/index"
 import { privateKeyPath, publicKeyPath, appId, mcid, apiKey } from "../src/configs/wechat-pay"
 
 
-const provider = new WechatPayProvider(appId, mcid, publicKeyPath, privateKeyPath, apiKey)
+const provider = new WechatPayProvider(appId, mcid, publicKeyPath, privateKeyPath, apiKey, 'http://www.taobao.com')
 
 describe('WechatPayProvider', function () {
   it('mobile payment link should be a string', async function () {

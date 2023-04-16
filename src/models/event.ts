@@ -4,7 +4,7 @@ import { Schema, Types, model } from "mongoose"
 const eventSchema = new Schema({
   amount: {
     required: true,
-    type: Types.Decimal128,
+    type: Number,
   },
   outTradeNo: {
     required: true,

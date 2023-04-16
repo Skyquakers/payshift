@@ -22,7 +22,8 @@ declare type ChargeObject = {
 
 declare type ChargeResponse = {
   charge: ChargeObject,
-  data: any
+  data: any,
+  chargeId?: string,
 }
 
 declare interface IPaymentProvidable {

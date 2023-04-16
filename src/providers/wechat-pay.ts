@@ -5,8 +5,9 @@ import { readFileSync } from 'fs'
 export class WechatPayProvider implements IPaymentProvidable {
   public sdk: WxPay
   public name: PayshiftProviderName = 'wechat_pay'
+  private notifyUrl?: string
 
-  constructor (appId: string, mchid: string, publicKeyPath: string, privateKeyPath: string, apikey: string) {
+  constructor (appId: string, mchid: string, publicKeyPath: string, privateKeyPath: string, apikey: string, notifyUrl?: string) {
     this.sdk = new WxPay({
       appid: appId,
       mchid,
@@ -14,13 +15,14 @@ export class WechatPayProvider implements IPaymentProvidable {
       privateKey: readFileSync(privateKeyPath),
       key: apikey,
     })
+    this.notifyUrl = notifyUrl
   }
 
-  public async createMobilePaymentLink (charge: ChargeCreateParams, notifyUrl: string): Promise<string> {
+  public async createMobilePaymentLink (charge: ChargeCreateParams, notifyUrl?: string): Promise<string> {
     const params = {
       description: charge.title,
       out_trade_no: charge.outTradeNo,
-      notify_url: notifyUrl,
+      notify_url: this.notifyUrl ?? notifyUrl ?? 'http://taobao.com',
       amount: {
         total: charge.amount,
       },
@@ -41,11 +43,11 @@ export class WechatPayProvider implements IPaymentProvidable {
     throw new Error(`wechat pay launch fails, code ${result.status} ${result.code}, ${result.message}`)
   }
 
-  public async createPaymentQrcodeUrl (charge: ChargeCreateParams, notifyUrl: string) {
+  public async createPaymentQrcodeUrl (charge: ChargeCreateParams, notifyUrl?: string) {
     const params = {
       description: charge.title,
       out_trade_no: charge.outTradeNo,
-      notify_url: notifyUrl,
+      notify_url: this.notifyUrl ?? notifyUrl ?? 'http://taobao.com',
       amount: {
         total: charge.amount,
       },

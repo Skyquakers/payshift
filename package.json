@@ -5,7 +5,7 @@
   "main": "dist/src/index.js",
   "typings": "index.d.ts",
   "scripts": {
-    "test": "npm run build && npx mocha dist/test/* --timeout 10000",
+    "test": "npm run build && npx mocha dist/test/*.js --timeout 10000",
     "build": "npx tsc",
     "dev": "npx ts-node src/dev.ts",
     "start": "node dist/index.js"
