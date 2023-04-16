@@ -9,9 +9,8 @@ export class AlipayProvider implements IPaymentProvidable {
   constructor (appId: string, privateKeyPath: string, alipayPublicKeyPath: string, notifyUrl?: string) {
     this.sdk = new AlipaySdk({
       appId,
-      signType: 'RSA2',
       privateKey: readFileSync(privateKeyPath, 'ascii'),
-      alipayPublicKey: alipayPublicKeyPath,
+      alipayPublicKey: readFileSync(alipayPublicKeyPath, 'ascii'),
     })
     this.notifyUrl = notifyUrl
   }

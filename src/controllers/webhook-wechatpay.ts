@@ -1,6 +1,5 @@
 import WxPay from 'wechatpay-node-v3'
 import { NextFunction, Request, Response } from "express"
-import { Types } from "mongoose"
 import { trigger } from "../event-handler"
 import { EventModel } from "../models/event"
 import { apiKey } from "../configs/wechat-pay"
@@ -8,6 +7,7 @@ import { apiKey } from "../configs/wechat-pay"
 
 // https://pay.weixin.qq.com/wiki/doc/api_external/ch/apis/chapter3_3_11.shtml
 export const onWechatPayEvent = async function (req: Request, res: Response, next: NextFunction) {
+  console.log('onWechatPayEvent')
   try {
     const {
       event_type,
@@ -69,6 +69,7 @@ export const onWechatPayEvent = async function (req: Request, res: Response, nex
       code: 'SUCCESS',
     })
   } catch (err) {
+    console.log('error occured in wechat event:')
     console.error(err)
     return res.status(500).json({
       code: 'FAIL',

@@ -32,10 +32,10 @@ export class Payshift {
     return null
   }
 
-  public async usedb(connectionString: string = 'mongodb://mongodb:27017/payshift') {
+  public async usedb(connectionString: string = 'mongodb://mongodb:27017/payshift', options?: mongoose.ConnectOptions) {
     try {
       console.log('starting connecting to mongodb')
-      await mongoose.connect(connectionString)
+      await mongoose.connect(connectionString, options)
       this.dbUsed = true
       console.log('mongodb connected')
 

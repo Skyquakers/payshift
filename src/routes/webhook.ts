@@ -7,10 +7,6 @@ import bodyParser from "body-parser"
 
 export const router: Router = Router()
 
-router.post('/alipay', onAlipayEvent)
-      .get('/alipay', onAlipayEvent)
-
-router.post('/wechat_pay', onWechatPayEvent)
-      .get('/wechat_pay', onWechatPayEvent)
-
+router.post('/alipay', bodyParser.raw({ type: 'application/json' }), onAlipayEvent)
+router.post('/wechat_pay', bodyParser.raw({ type: 'application/json' }), onWechatPayEvent)
 router.post('/stripe', bodyParser.raw({ type: 'application/json' }), onStripeEvent)
