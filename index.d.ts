@@ -8,6 +8,7 @@ declare type ChargeCreateParams = {
   returnUrl?: string,
   channel: PayshiftChannel,
   description?: string,
+  clientIp: string,
 }
 
 declare type ChargeObject = {
@@ -18,6 +19,7 @@ declare type ChargeObject = {
   description?: string,
   tradeNo?: string,
   currency: CurrencyCode,
+  clientIp: string,
 }
 
 declare type ChargeResponse = {

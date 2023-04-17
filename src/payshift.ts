@@ -99,6 +99,7 @@ export class Payshift {
       outTradeNo: params.outTradeNo,
       channel: params.channel,
       currency: params.currency,
+      clientIp: params.clientIp,
     }
 
     let chargeId: string | undefined = undefined

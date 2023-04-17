@@ -19,6 +19,7 @@ describe('WechatPayProvider', function () {
       channel: 'wechat_mobile_web',
       currency: CurrencyCode.CNY,
       returnUrl: return_url,
+      clientIp: '127.0.0.1'
     }, return_url)
 
     expect(url).to.be.a('string')
@@ -37,6 +38,7 @@ describe('WechatPayProvider', function () {
       channel: 'wechat_qrcode',
       currency: CurrencyCode.CNY,
       returnUrl: return_url,
+      clientIp: '127.0.0.1',
     }, return_url)
 
     expect(url).to.be.a('string')

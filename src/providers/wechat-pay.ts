@@ -27,7 +27,7 @@ export class WechatPayProvider implements IPaymentProvidable {
         total: charge.amount,
       },
       scene_info: {
-        payer_client_ip: '127.0.0.1',
+        payer_client_ip: charge.clientIp,
         h5_info: {
           type: 'Wap',
           app_name: '',
@@ -52,7 +52,7 @@ export class WechatPayProvider implements IPaymentProvidable {
         total: charge.amount,
       },
       scene_info: {
-        payer_client_ip: '127.0.0.1',
+        payer_client_ip: charge.clientIp,
       },
     };
     const result = await this.sdk.transactions_native(params)

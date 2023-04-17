@@ -31,24 +31,24 @@ export const onWechatPayEvent = async function (req: Request, res: Response, nex
     } = resource
     const result = sdk.decipher_gcm(ciphertext, associated_data, nonce, apiKey)
     const {
-      trade_status,
+      trade_state,
       out_trade_no,
       amount,
       service_introduction,
-      id,
+      transaction_id,
     } = result as any
     let settled = false
     let name: PayshiftEventName = 'charge.created'
 
-    if (trade_status === 'SUCCESS') {
+    if (trade_state === 'SUCCESS') {
       settled = true
       name = 'charge.succeeded'
       trigger(name, {
-        amount: amount.payer_total,
-        tradeNo: id,
+        amount: amount.total,
+        tradeNo: transaction_id,
         outTradeNo: out_trade_no,
         title: service_introduction,
-        currency: amount.payer_currency,
+        currency: amount.currency,
         provider: 'wechat_pay',
         name,
       })
@@ -59,8 +59,8 @@ export const onWechatPayEvent = async function (req: Request, res: Response, nex
         settled,
         outTradeNo: out_trade_no,
         name,
-        tradeNo: id,
-        amount: Number.parseInt(amount.payer_total, 10)
+        tradeNo: transaction_id,
+        amount: Number.parseInt(amount.total, 10)
       })
       await event.save() 
     }

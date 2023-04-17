@@ -29,6 +29,11 @@ const chargeSchema = new Schema({
   channel: {
     type: String,
     required: true,
+  },
+  clientIp: {
+    type: String,
+    required: false,
+    default: '127.0.0.1'
   }
 })
 
