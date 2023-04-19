@@ -34,6 +34,11 @@ const chargeSchema = new Schema({
     type: String,
     required: false,
     default: '127.0.0.1'
+  },
+  createdAt: {
+    type: Number,
+    required: false,
+    default: Date.now
   }
 })
 

@@ -1,4 +1,4 @@
-import { Schema, Types, model } from "mongoose"
+import { Schema, model } from "mongoose"
 
 
 const eventSchema = new Schema({
@@ -25,6 +25,11 @@ const eventSchema = new Schema({
   settled: {
     type: Boolean,
     default: false,
+  },
+  createdAt: {
+    type: Number,
+    required: false,
+    default: Date.now
   }
 })
 

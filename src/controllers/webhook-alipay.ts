@@ -36,12 +36,14 @@ export const onAlipayEvent = async function (req: Request, res: Response, next: 
       subject } = data
     const status = data.trade_status as AlipayNotifyStatus
 
+    const amount = Number.parseInt(total_amount, 10) * 100
+
     if (['TRADE_SUCCESS', 'TRADE_FINISHED'].includes(status)) {
       name = 'charge.succeeded'
       settled = true
 
       trigger(name, {
-        amount: total_amount,
+        amount,
         tradeNo: trade_no,
         outTradeNo: out_trade_no,
         title: subject,
@@ -57,7 +59,7 @@ export const onAlipayEvent = async function (req: Request, res: Response, next: 
         outTradeNo: out_trade_no,
         name,
         tradeNo: trade_no,
-        amount: Number.parseInt(total_amount, 10)
+        amount,
       })
       await event.save() 
     }
