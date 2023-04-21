@@ -36,7 +36,7 @@ export const onAlipayEvent = async function (req: Request, res: Response, next: 
       subject } = data
     const status = data.trade_status as AlipayNotifyStatus
 
-    const amount = Number.parseInt(total_amount, 10) * 100
+    const amount = Number(total_amount) * 100
 
     if (['TRADE_SUCCESS', 'TRADE_FINISHED'].includes(status)) {
       name = 'charge.succeeded'
