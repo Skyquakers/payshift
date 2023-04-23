@@ -73,13 +73,11 @@ export class StripeProvider implements IPaymentProvidable {
   }
 
   public async getCharge (chargeId: string): Promise<Stripe.Charge> {
-    const result = await this.sdk.charges.retrieve(chargeId)
-    return result
+    return await this.sdk.charges.retrieve(chargeId)
   }
 
   public async getTransaction (txnId: string): Promise<Stripe.BalanceTransaction> {
-    const result = await this.sdk.balanceTransactions.retrieve(txnId)
-    return result
+    return await this.sdk.balanceTransactions.retrieve(txnId)
   }
 
   public async getLoginLink (accountId: string): Promise<Stripe.LoginLink> {
@@ -90,5 +88,17 @@ export class StripeProvider implements IPaymentProvidable {
     return await this.sdk.balance.retrieve({
       stripeAccount: accountId
     })
+  }
+
+  public async createProduct (params: Stripe.ProductCreateParams): Promise<Stripe.Product> {
+    return await this.sdk.products.create(params)
+  }
+
+  public async createPrice (params: Stripe.PriceCreateParams): Promise<Stripe.Price> {
+    return await this.sdk.prices.create(params)
+  }
+
+  public async createSubscription (params: Stripe.SubscriptionCreateParams): Promise<Stripe.Subscription> {
+    return await this.sdk.subscriptions.create(params)
   }
 }

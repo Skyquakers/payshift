@@ -22,7 +22,7 @@ export class WechatPayProvider implements IPaymentProvidable {
     const params = {
       description: charge.title,
       out_trade_no: charge.outTradeNo,
-      notify_url: this.notifyUrl ?? notifyUrl ?? 'http://taobao.com',
+      notify_url: notifyUrl ?? this.notifyUrl ?? 'http://taobao.com',
       amount: {
         total: charge.amount,
       },
@@ -47,7 +47,7 @@ export class WechatPayProvider implements IPaymentProvidable {
     const params = {
       description: charge.title,
       out_trade_no: charge.outTradeNo,
-      notify_url: this.notifyUrl ?? notifyUrl ?? 'http://taobao.com',
+      notify_url: notifyUrl ?? this.notifyUrl ?? 'http://taobao.com',
       amount: {
         total: charge.amount,
       },
