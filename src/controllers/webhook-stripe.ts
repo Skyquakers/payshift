@@ -41,6 +41,10 @@ export const onStripeEvent = async function (req: Request, res: Response, next: 
       console.log(event.type)
       console.log(event.data)
     }
+
+    return res.status(200).json({
+      received: true
+    })
   } catch (err: any) {
     if (err instanceof Error) {
       return res.status(400).send(err.message)      
@@ -48,9 +52,4 @@ export const onStripeEvent = async function (req: Request, res: Response, next: 
 
     return res.status(400).json(err)
   }
-
-
-  res.json({
-    received: true
-  })
 }
