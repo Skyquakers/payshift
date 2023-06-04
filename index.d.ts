@@ -48,7 +48,8 @@ declare type PayshiftEventName = 'payment_intent.succeeded' | 'payment_intent.cr
 'charge.succeeded' | 'charge.created' | 'charge.failed' |
 'account.updated' | 'account.application.deauthorized' | 'account.external_account.updated' |
 'balance.available' |
-'payout.failed'
+'payout.failed' |
+'identity.verification_session.verified' | 'identity.verification_session.requires_input' | 'identity.verification_session.created'
 
 
 declare type PayshiftProviderName = 'alipay' | 'wechat_pay' | 'stripe' | 'paymentcloud' | 'shift4' | 'paxum'

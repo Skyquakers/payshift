@@ -37,6 +37,14 @@ export const onStripeEvent = async function (req: Request, res: Response, next: 
         name: 'payment_intent.succeeded',
         provider: 'stripe',
       }, paymentIntent)
+    } else if (event.type === 'identity.verification_session.verified' ||
+               event.type === 'identity.verification_session.requires_input' ||
+               event.type === 'identity.verification_session.created') {
+      const session = event.data.object as Stripe.Identity.VerificationSession
+      trigger(event.type, {
+        name: event.type,
+        provider: 'stripe',
+      }, session)
     } else {
       console.log(event.type)
       console.log(event.data)
