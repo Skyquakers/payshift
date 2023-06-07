@@ -1,0 +1,29 @@
+# Payshift
+
+unified payment api for multiple payment processors
+
+
+## Supported Payment Processors
+
+- Alipay
+- Wechat Pay
+- Stripe
+
+## Usage
+
+```javascript
+import { Payshift, AlipayProvider, StripeProvider, WechatPayProvider } from "payshift"
+import { privateKeyPath, alipayPublicKeyPath, appId } from "your alipay config"
+import { testKey, endpointSecret } from "your stripe config"
+import { apiKey, mcid, publicKeyPath } from "your wechatpay config"
+
+const alipay = new AlipayProvider(appId, privateKeyPath, alipayPublicKeyPath)
+const stripe = new StripeProvider(testKey)
+const wechat = new WechatPayProvider(appId, mcid, publicKeyPath, privateKeyPath, apiKey)
+
+const payshift = new Payshift([alipay, stripe, wechat], {
+  stripeEndpointSecret: endpointSecret
+})
+// webhooks server, used for notify_url for some payments
+payshift.startWebServer('http://localhost:3000', 3000)
+```
