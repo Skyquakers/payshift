@@ -109,4 +109,8 @@ export class StripeProvider implements IPaymentProvidable {
   public async getVerificationSession (id: string): Promise<Stripe.Identity.VerificationSession> {
     return await this.sdk.identity.verificationSessions.retrieve(id)
   }
+
+  public async getPaymentIntent (id: string): Promise<Stripe.PaymentIntent> {
+    return await this.sdk.paymentIntents.retrieve(id)
+  }
 }

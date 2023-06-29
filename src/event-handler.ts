@@ -24,12 +24,14 @@ export const register = function (event: PayshiftEventName, callback: Function) 
 }
 
 
-export const trigger = function (event: PayshiftEventName, object: PayshiftEvent, ...args: any[]) {
+export const trigger = async function (event: PayshiftEventName, object: PayshiftEvent, ...args: any[]) {
   const fns = callbacks.get(event)
   if (fns) {
+    const promises: Promise<void>[] = []
     fns.forEach(async fn => {
-      await fn.call(null, object, ...args)
+      promises.push(fn.call(null, object, ...args))
     })
+    await Promise.all(promises)
   }
 }
 

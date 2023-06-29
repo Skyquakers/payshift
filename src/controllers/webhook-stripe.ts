@@ -25,7 +25,7 @@ export const onStripeEvent = async function (req: Request, res: Response, next: 
     if (event.type === 'account.updated') {
       const account = event.data.object as Stripe.Account
       if (account.payouts_enabled) {
-        trigger('account.updated', {
+        await trigger('account.updated', {
           name: 'account.updated',
           accountId: account.id,
           provider: 'stripe',
@@ -33,7 +33,7 @@ export const onStripeEvent = async function (req: Request, res: Response, next: 
       }
     } else if (event.type === 'payment_intent.succeeded') {
       const paymentIntent = event.data.object as Stripe.PaymentIntent
-      trigger('payment_intent.succeeded', {
+      await trigger('payment_intent.succeeded', {
         name: 'payment_intent.succeeded',
         provider: 'stripe',
       }, paymentIntent)
@@ -41,10 +41,22 @@ export const onStripeEvent = async function (req: Request, res: Response, next: 
                event.type === 'identity.verification_session.requires_input' ||
                event.type === 'identity.verification_session.created') {
       const session = event.data.object as Stripe.Identity.VerificationSession
-      trigger(event.type, {
+      await trigger(event.type, {
         name: event.type,
         provider: 'stripe',
       }, session)
+    } else if (event.type === 'customer.subscription.updated') {
+      const subscription = event.data.object as Stripe.Subscription
+      await trigger('customer.subscription.updated', {
+        name: 'customer.subscription.updated',
+        provider: 'stripe',
+      }, subscription)
+    } else if (event.type === 'invoice.paid') {
+      const invoice = event.data.object as Stripe.Invoice
+      await trigger('invoice.paid', {
+        name: 'invoice.paid',
+        provider: 'stripe',
+      }, invoice)
     } else {
       console.log(event.type)
       console.log(event.data)

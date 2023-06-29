@@ -42,7 +42,7 @@ export const onAlipayEvent = async function (req: Request, res: Response, next: 
       name = 'charge.succeeded'
       settled = true
 
-      trigger(name, {
+      await trigger(name, {
         amount,
         tradeNo: trade_no,
         outTradeNo: out_trade_no,

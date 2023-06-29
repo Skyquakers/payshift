@@ -43,7 +43,7 @@ export const onWechatPayEvent = async function (req: Request, res: Response, nex
     if (trade_state === 'SUCCESS') {
       settled = true
       name = 'charge.succeeded'
-      trigger(name, {
+      await trigger(name, {
         amount: amount.total,
         tradeNo: transaction_id,
         outTradeNo: out_trade_no,
