@@ -57,6 +57,12 @@ export const onStripeEvent = async function (req: Request, res: Response, next: 
         name: 'invoice.paid',
         provider: 'stripe',
       }, invoice)
+    } else if (event.type === 'invoice.finalized') {
+      const invoice = event.data.object as Stripe.Invoice
+      await trigger('invoice.finalized', {
+        name: 'invoice.finalized',
+        provider: 'stripe',
+      }, invoice)
     } else {
       console.log(event.type)
       console.log(event.data)
