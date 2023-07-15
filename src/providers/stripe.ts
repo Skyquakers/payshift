@@ -113,4 +113,8 @@ export class StripeProvider implements IPaymentProvidable {
   public async getPaymentIntent (id: string): Promise<Stripe.PaymentIntent> {
     return await this.sdk.paymentIntents.retrieve(id)
   }
+
+  public async updateSubscription (id: string, params: Stripe.SubscriptionUpdateParams) {
+    await this.sdk.subscriptions.update(id, params)
+  }
 }
