@@ -1,7 +1,7 @@
 import express, { Express } from 'express'
 import { router as webhookRouter } from './routes/webhook'
 import { register, unregister } from './event-handler'
-import mongoose, { SchemaTypes } from 'mongoose'
+import mongoose from 'mongoose'
 import { AlipayProvider, StripeProvider, WechatPayProvider } from './index'
 import { chargeModel } from './models/charge'
 
@@ -143,7 +143,8 @@ export class Payshift {
       }
     } else if (chargeObj.channel === 'wechat_mobile_web') {
       const provider = this.getProvider('wechat_pay') as WechatPayProvider
-      const url = await provider.createMobilePaymentLink(params, `${this.hostname}/webhooks/wechat_pay`)
+      const url = this.webServerStarted ? await provider.createMobilePaymentLink(params, `${this.hostname}/webhooks/wechat_pay`) :
+                                          await provider.createMobilePaymentLink(params)
       return {
         charge: chargeObj,
         data: url,
@@ -151,7 +152,8 @@ export class Payshift {
       }
     } else if (chargeObj.channel === 'wechat_qrcode') {
       const provider = this.getProvider('wechat_pay') as WechatPayProvider
-      const url = await provider.createPaymentQrcodeUrl(params, `${this.hostname}/webhooks/wechat_pay`)
+      const url = this.webServerStarted ? await provider.createPaymentQrcodeUrl(params, `${this.hostname}/webhooks/wechat_pay`) :
+                                          await provider.createPaymentQrcodeUrl(params)
       return {
         charge: chargeObj,
         data: url,
