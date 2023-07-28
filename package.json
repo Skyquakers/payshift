@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "unified payment api for multiple payment processors",
   "main": "dist/src/index.js",
-  "typings": "index.d.ts",
+  "typings": "dist/index.d.ts",
   "scripts": {
     "test": "npm run build && npx mocha dist/test/*.js --timeout 10000",
-    "build": "npx tsc",
+    "build": "npx tsc && cp index.d.ts dist/",
     "dev": "npx ts-node src/dev.ts",
     "start": "node dist/index.js"
   },
@@ -14,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "alipay-sdk": "^3.3.0",
+    "axios": "^1.4.0",
     "body-parser": "^1.20.2",
     "express": "^4.18.2",
     "mongoose": "^7.0.1",

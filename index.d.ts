@@ -54,7 +54,7 @@ declare type PayshiftEventName = 'payment_intent.succeeded' | 'payment_intent.cr
 'invoice.created' | 'invoice.finalized' | 'invoice.finalization_failed' | 'invoice.paid'
 
 
-declare type PayshiftProviderName = 'alipay' | 'wechat_pay' | 'stripe' | 'paymentcloud' | 'shift4' | 'paxum'
+declare type PayshiftProviderName = 'alipay' | 'wechat_pay' | 'stripe' | 'paypal' | 'ccbill'
 
 
 declare type PayshiftChannel = 'stripe_web' | 'alipay_web' | 'wechat_qrcode' |

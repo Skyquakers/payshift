@@ -6,6 +6,7 @@
   "include": ["src/**/*", "test/**/*", "index.d.ts"],
   "exclude": ["node_modules"],
   "compilerOptions": {
+    "declaration": true,
     "outDir": "dist",
     "moduleResolution": "node16"
   },
