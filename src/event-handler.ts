@@ -1,3 +1,4 @@
+import { PayshiftEventName, PayshiftProviderName } from "./common"
 import { CurrencyCode } from "./currency"
 
 export const callbacks:  Map<string, Function[]> = new Map()

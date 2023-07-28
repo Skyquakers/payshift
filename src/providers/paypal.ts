@@ -1,6 +1,9 @@
 import axios from 'axios'
 import { URLSearchParams } from 'url'
 import { CurrencyCode } from '..'
+import {
+  IPaymentProvidable,
+  PayshiftProviderName } from '../common'
 
 
 export class PaypalProvider implements IPaymentProvidable {

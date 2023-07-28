@@ -1,6 +1,10 @@
-declare module "payshift"
+import Stripe from "stripe"
+import { CurrencyCode } from "./currency"
+import AlipaySdk from "alipay-sdk"
+import WxPay from 'wechatpay-node-v3'
 
-declare type ChargeCreateParams = {
+
+export type ChargeCreateParams = {
   title: string,
   amount: number,
   outTradeNo: string,
@@ -11,7 +15,7 @@ declare type ChargeCreateParams = {
   clientIp: string,
 }
 
-declare type ChargeObject = {
+export type ChargeObject = {
   title: string,
   amount: number,
   outTradeNo: string,
@@ -22,29 +26,26 @@ declare type ChargeObject = {
   clientIp: string,
 }
 
-declare type ChargeResponse = {
+export type ChargeResponse = {
   charge: ChargeObject,
   data: any,
   chargeId?: string,
 }
 
-declare interface IPaymentProvidable {
+export interface IPaymentProvidable {
   name: PayshiftProviderName;
   sdk: AlipaySdk | WxPay | Stripe;
   webhookEndpoint?: string,
 }
 
 
-type ClassImplements<
+export type ClassImplements<
   I,
   ConstructorArgs extends any[] = any[]
 > = new(...args: ConstructorArgs) => I
 
 
-declare const PaymentProvider: ClassImplements<IPaymentProvidable, []>
-
-
-declare type PayshiftEventName = 'payment_intent.succeeded' | 'payment_intent.created' |
+export type PayshiftEventName = 'payment_intent.succeeded' | 'payment_intent.created' |
 'charge.succeeded' | 'charge.created' | 'charge.failed' |
 'account.updated' | 'account.application.deauthorized' | 'account.external_account.updated' |
 'balance.available' |
@@ -54,14 +55,14 @@ declare type PayshiftEventName = 'payment_intent.succeeded' | 'payment_intent.cr
 'invoice.created' | 'invoice.finalized' | 'invoice.finalization_failed' | 'invoice.paid'
 
 
-declare type PayshiftProviderName = 'alipay' | 'wechat_pay' | 'stripe' | 'paypal' | 'ccbill'
+export type PayshiftProviderName = 'alipay' | 'wechat_pay' | 'stripe' | 'paypal' | 'ccbill'
 
 
-declare type PayshiftChannel = 'stripe_web' | 'alipay_web' | 'wechat_qrcode' |
+export type PayshiftChannel = 'stripe_web' | 'alipay_web' | 'wechat_qrcode' |
 'wechat_mobile_web' | 'alipay_mobile_web'
 
 
-declare type PayshiftOptions = {
+export type PayshiftOptions = {
   usedb?: boolean,
   stripeEndpointSecret?: string,
 }

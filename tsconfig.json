@@ -1,13 +1,18 @@
 {
-  "ts-node": {
-    "files": true
-  },
-  "extends": "@tsconfig/node16/tsconfig.json",
-  "include": ["src/**/*", "test/**/*", "index.d.ts"],
-  "exclude": ["node_modules"],
   "compilerOptions": {
+    "target": "ES2018",
+    "module": "CommonJS",
+    "outDir": "./dist",
+    "strict": true,
     "declaration": true,
-    "outDir": "dist",
-    "moduleResolution": "node16"
+    "esModuleInterop": true,
+    "skipLibCheck": true
   },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ]
 }

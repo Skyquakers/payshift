@@ -1,5 +1,8 @@
 import Stripe from "stripe"
 import { CurrencyCode } from "../currency"
+import {
+  IPaymentProvidable,
+  PayshiftProviderName } from '../common'
 
 
 export class StripeProvider implements IPaymentProvidable {

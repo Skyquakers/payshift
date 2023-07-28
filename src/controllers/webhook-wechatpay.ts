@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from "express"
 import { trigger } from "../event-handler"
 import { EventModel } from "../models/event"
 import { apiKey } from "../configs/wechat-pay"
+import { PayshiftEventName } from '../common'
 
 
 // https://pay.weixin.qq.com/wiki/doc/api_external/ch/apis/chapter3_3_11.shtml

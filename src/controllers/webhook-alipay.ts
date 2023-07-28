@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from "express"
 import { trigger } from "../event-handler"
 import { EventModel } from "../models/event"
 import { CurrencyCode } from "../currency"
+import { PayshiftEventName } from '../common'
 
 
 type AlipayNotifyStatus = 'TRADE_SUCCESS' | 'TRADE_FINISHED' | 'WAIT_BUYER_PAY' | 'TRADE_CLOSED'

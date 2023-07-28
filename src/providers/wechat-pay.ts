@@ -1,5 +1,9 @@
 import WxPay from 'wechatpay-node-v3'
 import { readFileSync } from 'fs'
+import {
+  ChargeCreateParams,
+  IPaymentProvidable,
+  PayshiftProviderName } from '../common'
 
 
 export class WechatPayProvider implements IPaymentProvidable {

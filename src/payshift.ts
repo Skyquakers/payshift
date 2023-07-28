@@ -4,6 +4,10 @@ import { register, unregister } from './event-handler'
 import mongoose from 'mongoose'
 import { AlipayProvider, StripeProvider, WechatPayProvider } from './index'
 import { chargeModel } from './models/charge'
+import {
+  ChargeCreateParams, ChargeObject, ChargeResponse,
+  IPaymentProvidable, PayshiftEventName, PayshiftOptions,
+  PayshiftProviderName } from './common'
 
 
 export class Payshift {

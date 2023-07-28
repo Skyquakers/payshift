@@ -1,5 +1,9 @@
 import AlipaySdk from "alipay-sdk"
 import { readFileSync } from "fs"
+import {
+  ChargeCreateParams,
+  IPaymentProvidable,
+  PayshiftProviderName } from '../common'
 
 export class AlipayProvider implements IPaymentProvidable {
   public sdk: AlipaySdk
