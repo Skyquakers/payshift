@@ -8,6 +8,8 @@ unified payment api for multiple payment processors
 - Alipay
 - Wechat Pay
 - Stripe
+- Paypal
+- CCBill
 
 ## Usage
 
@@ -26,4 +28,12 @@ const payshift = new Payshift([alipay, stripe, wechat], {
 })
 // webhooks server, used for notify_url for some payments
 payshift.startWebServer('http://localhost:3000', 3000)
+
+// optionally, you can use mongodb to save your txns in "payshift" database
+payshit.usedb()
+
+// handle webhooks using the internal webhook server
+payshift.on('charge.succeeded', event => {
+  // handle event
+})
 ```
