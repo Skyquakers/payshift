@@ -1,26 +1,23 @@
 import axios from 'axios'
 import { URLSearchParams } from 'url'
-import { CurrencyCode } from '..'
-import {
-  IPaymentProvidable,
-  PayshiftProviderName } from '../common'
+import { CurrencyCode } from '../currency'
+import { IPaymentProvidable, PayshiftProviderName } from '../common'
 
 
 export class PaypalProvider implements IPaymentProvidable {
   public name: PayshiftProviderName = 'paypal'
-  public sdk: any
+  public sdk: any = null
 
   private clientId: string
   private clientSecret: string
   private accessToken: string | null = null
 
-  constructor (clientId: string, clientSecret: string, notifyUrl?: string) {
+  constructor (clientId: string, clientSecret: string) {
     this.clientId = clientId
     this.clientSecret = clientSecret
-    this.arrangeAccessToken()
   }
 
-  private async arrangeAccessToken () {
+  private async getAccessToken () {
     const endpoint = process.env.NODE_ENV === 'production' ? 'https://api-m.paypal.com/v1/oauth2/token' : 'https://api-m.sandbox.paypal.com/v1/oauth2/token'
     const params = new URLSearchParams({
       grant_type: 'client_credentials'
@@ -37,10 +34,12 @@ export class PaypalProvider implements IPaymentProvidable {
         }
       })
   
-      const expiresIn = res.data.expires_in
+      const expiresIn = Number(res.data.expires_in) // secs
       this.accessToken = res.data.access_token
 
-      setTimeout(this.arrangeAccessToken, expiresIn - 5)
+      setTimeout(() => {
+        this.accessToken = null
+      }, (expiresIn - 3) * 1000)
     } catch (err) {
       console.error(err)
       throw err
@@ -55,7 +54,7 @@ export class PaypalProvider implements IPaymentProvidable {
     emailContent: { subject: string, message: string } = { subject: 'You have a payout', message: 'You have a payout to your paypal' }) {
     try {
       if (!this.accessToken) {
-        await this.arrangeAccessToken()
+        await this.getAccessToken()
       }
 
       const headers = {
