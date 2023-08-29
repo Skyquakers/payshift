@@ -51,6 +51,12 @@ export const onStripeEvent = async function (req: Request, res: Response, next: 
         name: 'customer.subscription.updated',
         provider: 'stripe',
       }, subscription)
+    } else if (event.type === 'customer.subscription.deleted') {
+      const subscription = event.data.object as Stripe.Subscription
+      await trigger('customer.subscription.deleted', {
+        name: 'customer.subscription.deleted',
+        provider: 'stripe',
+      }, subscription)
     } else if (event.type === 'invoice.paid') {
       const invoice = event.data.object as Stripe.Invoice
       await trigger('invoice.paid', {

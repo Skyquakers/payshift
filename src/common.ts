@@ -51,7 +51,7 @@ export type PayshiftEventName = 'payment_intent.succeeded' | 'payment_intent.cre
 'balance.available' |
 'payout.failed' |
 'identity.verification_session.verified' | 'identity.verification_session.requires_input' | 'identity.verification_session.created' |
-'customer.subscription.updated' |
+'customer.subscription.updated' | 'customer.subscription.deleted' |
 'invoice.created' | 'invoice.finalized' | 'invoice.finalization_failed' | 'invoice.paid'
 
 
