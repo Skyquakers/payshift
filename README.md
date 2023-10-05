@@ -9,7 +9,7 @@ unified payment api for multiple payment processors
 - Wechat Pay
 - Stripe
 - Paypal
-- CCBill
+- EPay
 
 ## Usage
 
@@ -18,12 +18,14 @@ import { Payshift, AlipayProvider, StripeProvider, WechatPayProvider } from "pay
 import { privateKeyPath, alipayPublicKeyPath, appId } from "your alipay config"
 import { testKey, endpointSecret } from "your stripe config"
 import { apiKey, mcid, publicKeyPath } from "your wechatpay config"
+import { pid, key } from "your epay config"
 
 const alipay = new AlipayProvider(appId, privateKeyPath, alipayPublicKeyPath)
 const stripe = new StripeProvider(testKey)
 const wechat = new WechatPayProvider(appId, mcid, publicKeyPath, privateKeyPath, apiKey)
+const epay = new EPayProvider(pid, key)
 
-const payshift = new Payshift([alipay, stripe, wechat], {
+const payshift = new Payshift([alipay, stripe, wechat, epay], {
   stripeEndpointSecret: endpointSecret
 })
 // webhooks server, used for notify_url for some payments

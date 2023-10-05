@@ -13,6 +13,7 @@ export type ChargeCreateParams = {
   channel: PayshiftChannel,
   description?: string,
   clientIp: string,
+  userAgent?: string
 }
 
 export type ChargeObject = {
@@ -24,6 +25,7 @@ export type ChargeObject = {
   tradeNo?: string,
   currency: CurrencyCode,
   clientIp: string,
+  userAgent?: string
 }
 
 export type ChargeResponse = {
@@ -34,7 +36,7 @@ export type ChargeResponse = {
 
 export interface IPaymentProvidable {
   name: PayshiftProviderName;
-  sdk: AlipaySdk | WxPay | Stripe;
+  sdk?: AlipaySdk | WxPay | Stripe;
   webhookEndpoint?: string,
 }
 
@@ -55,11 +57,11 @@ export type PayshiftEventName = 'payment_intent.succeeded' | 'payment_intent.cre
 'invoice.created' | 'invoice.finalized' | 'invoice.finalization_failed' | 'invoice.paid'
 
 
-export type PayshiftProviderName = 'alipay' | 'wechat_pay' | 'stripe' | 'paypal' | 'ccbill'
+export type PayshiftProviderName = 'alipay' | 'wechat_pay' | 'stripe' | 'paypal' | 'epay'
 
 
 export type PayshiftChannel = 'stripe_web' | 'alipay_web' | 'wechat_qrcode' |
-'wechat_mobile_web' | 'alipay_mobile_web'
+'wechat_mobile_web' | 'alipay_mobile_web' | 'epay_alipay' | 'epay_wechat_pay'
 
 
 export type PayshiftOptions = {

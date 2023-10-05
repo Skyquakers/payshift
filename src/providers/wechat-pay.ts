@@ -26,7 +26,7 @@ export class WechatPayProvider implements IPaymentProvidable {
     const params = {
       description: charge.title,
       out_trade_no: charge.outTradeNo,
-      notify_url: notifyUrl ?? this.notifyUrl ?? 'http://taobao.com',
+      notify_url: notifyUrl ?? this.notifyUrl ?? '',
       amount: {
         total: charge.amount,
       },

@@ -2,7 +2,7 @@ import express, { Express } from 'express'
 import { router as webhookRouter } from './routes/webhook'
 import { register, unregister } from './event-handler'
 import mongoose from 'mongoose'
-import { AlipayProvider, StripeProvider, WechatPayProvider } from './index'
+import { AlipayProvider, EPayProvider, StripeProvider, WechatPayProvider } from './index'
 import { chargeModel } from './models/charge'
 import {
   ChargeCreateParams, ChargeObject, ChargeResponse,
@@ -104,6 +104,7 @@ export class Payshift {
       channel: params.channel,
       currency: params.currency,
       clientIp: params.clientIp,
+      userAgent: params.userAgent
     }
 
     let chargeId: string | undefined = undefined
@@ -161,6 +162,15 @@ export class Payshift {
       return {
         charge: chargeObj,
         data: url,
+        chargeId,
+      }
+    } else if (chargeObj.channel === 'epay_alipay' || chargeObj.channel === 'epay_wechat_pay') {
+      const provider = this.getProvider('epay') as EPayProvider
+      const result = this.webServerStarted ? await provider.createPayment(params, `${this.hostname}/webhooks/epay`) :
+                                             await provider.createPayment(params)
+      return {
+        charge: chargeObj,
+        data: result,
         chargeId,
       }
     }
