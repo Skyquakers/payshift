@@ -11,7 +11,7 @@ interface EPayPaymentResult {
   urlscheme?: string
 }
 
-type EPayType = 'alipay' | 'wxpay' | 'qqpay' | 'bank' | 'jdpay' | 'paypal'
+export type EPayType = 'alipay' | 'wxpay' | 'qqpay' | 'bank' | 'jdpay' | 'paypal'
 
 type EPayDevice = 'pc' | 'mobile' | 'qq' | 'wechat' | 'alipay'
 
@@ -32,10 +32,20 @@ interface EPayPaymentParams {
 
 type PresignedEPayPaymentParams = Omit<EPayPaymentParams, 'sign'>
 
+export interface EPayMetaParams {
+  notify_url: string
+  clientip: string
+}
 
-export const sign = function(data: PresignedEPayPaymentParams, key: string): EPayPaymentParams {
+let cachedKey: string = ''
+
+export const sign = function(data: PresignedEPayPaymentParams, key?: string): string {
   const keys: (keyof PresignedEPayPaymentParams)[] = []
   const pairs: [keyof PresignedEPayPaymentParams, string][] = []
+
+  if (key) {
+    cachedKey = key    
+  }
 
   for (const key of Object.keys(data) as (keyof PresignedEPayPaymentParams)[]) {
     keys.push(key)
@@ -46,13 +56,8 @@ export const sign = function(data: PresignedEPayPaymentParams, key: string): EPa
   }
 
   const params = new URLSearchParams(pairs)
-  const sign = createHash('md5').update(`${params.toString()}${key}`).digest('hex')
-  const signedData = {
-    ...data,
-    sign
-  }
 
-  return signedData
+  return createHash('md5').update(`${params.toString()}${cachedKey}`).digest('hex')
 }
 
 
@@ -60,12 +65,14 @@ export class EPayProvider implements IPaymentProvidable {
   public name: PayshiftProviderName = 'epay'
   private pid: number
   private key: string
+  private endpoint: string
   private notifyUrl?: string
 
-  constructor (pid: number, key: string, notifyUrl?: string) {
+  constructor (endpoint: string, pid: number, key: string, notifyUrl?: string) {
     this.pid = pid
     this.notifyUrl = notifyUrl
     this.key = key
+    this.endpoint = endpoint
   }
   
 
@@ -74,21 +81,30 @@ export class EPayProvider implements IPaymentProvidable {
     notifyUrl?: string): Promise<Pick<EPayPaymentResult, 'payurl' | 'qrcode' | 'urlscheme'>> {
     const type: EPayType = charge.channel === 'epay_alipay' ? 'alipay' : 'wxpay'
 
+    const notify_url = notifyUrl ?? this.notifyUrl ?? ''
+
     const data: Omit<EPayPaymentParams, 'sign'> = {
       pid: this.pid,
       out_trade_no: charge.outTradeNo,
-      notify_url: notifyUrl ?? this.notifyUrl ?? '',
+      notify_url,
       name: charge.title,
       money: (charge.amount / 100).toFixed(2),
       clientip: charge.clientIp,
       device: 'pc',
       sign_type: 'MD5',
       type,
+      param: JSON.stringify({
+        notify_url,
+        clientip: charge.clientIp
+      })
     }
 
     const res = await axios.post<EPayPaymentParams, AxiosResponse<EPayPaymentResult>>(
-      'http://epay.com/mapi.php',
-      sign(data, this.key)
+      `${this.endpoint}/mapi.php`,
+      {
+        ...data,
+        sign: sign(data, this.key)
+      }
     )
 
     if (res.data.code !== 1) {

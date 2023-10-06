@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express"
-import { sign } from '../providers/epay'
+import { type EPayMetaParams, sign, type EPayType } from '../providers/epay'
 import { CurrencyCode } from "../currency"
 import { trigger } from "../event-handler"
 import { EventModel } from "../models/event"
@@ -8,8 +8,27 @@ import { PayshiftEventName } from "../common"
 
 export const onEPayEvent = async function (req: Request, res: Response, next: NextFunction) {
   try {
-    // TODO: verify sign
-    const { out_trade_no, money, trade_no, name: title, sign: serverSign, trade_status } = req.query
+    const { type, pid, out_trade_no, money, trade_no, name: title, sign: serverSign, trade_status, param } = req.query
+    
+    const meta = JSON.parse(param as string) as EPayMetaParams
+
+    const clientSign = sign({
+      pid: Number(pid),
+      out_trade_no: out_trade_no as string,
+      notify_url: meta.notify_url,
+      name: title as string,
+      money: money as string,
+      clientip: meta.clientip,
+      device: 'pc',
+      sign_type: 'MD5',
+      type: type as EPayType,
+    })
+
+    if (clientSign !== serverSign) {
+      console.log('clientSign', clientSign)
+      console.log('serverSign', serverSign)
+      throw new Error('sign check error')
+    }
 
     let name: PayshiftEventName = 'charge.failed'
     const amount = Number(money) * 100
@@ -43,7 +62,7 @@ export const onEPayEvent = async function (req: Request, res: Response, next: Ne
 
     res.status(200).send('success')
   } catch (err) {
-    console.log('error occured in alipay event:')
+    console.log('error occured in epay event:')
     console.error(err)
     res.status(500).send('fail')
   }
