@@ -8,6 +8,7 @@ import {
   ChargeCreateParams, ChargeObject, ChargeResponse,
   IPaymentProvidable, PayshiftEventName, PayshiftOptions,
   PayshiftProviderName } from './common'
+import { EPayClusterProvider } from './providers/epay-cluster'
 
 
 export class Payshift {
@@ -26,14 +27,14 @@ export class Payshift {
     this.stripeEndpointSecret = options.stripeEndpointSecret
   }
 
-  private getProvider(name: PayshiftProviderName): IPaymentProvidable | null {
+  private getProvider(name: PayshiftProviderName): IPaymentProvidable {
     for (const provider of this.providers.values()) {
       if (provider.name === name) {
         return provider
       }
     }
 
-    return null
+    throw new Error(`no such provider ${name}`)
   }
 
   public async usedb(connectionString: string = 'mongodb://mongodb:27017/payshift', options?: mongoose.ConnectOptions) {
@@ -70,6 +71,10 @@ export class Payshift {
           res.locals.stripe = provider
         } else if (provider.name === 'wechat_pay') {
           res.locals.wechatPay = provider
+        } else if (provider.name === 'epay') {
+          res.locals.epays = [provider]
+        } else if (provider.name === 'epay_cluster') {
+          res.locals.epays = (provider as EPayClusterProvider).providers
         }
 
         next()
@@ -166,6 +171,15 @@ export class Payshift {
       }
     } else if (chargeObj.channel === 'epay_alipay' || chargeObj.channel === 'epay_wechat_pay') {
       const provider = this.getProvider('epay') as EPayProvider
+      const result = this.webServerStarted ? await provider.createPayment(params, `${this.hostname}/webhooks/epay`) :
+                                             await provider.createPayment(params)
+      return {
+        charge: chargeObj,
+        data: result,
+        chargeId,
+      }
+    } else if (chargeObj.channel === 'epay_cluster_alipay' || chargeObj.channel === 'epay_cluster_wechat_pay') {
+      const provider = this.getProvider('epay_cluster') as EPayClusterProvider
       const result = this.webServerStarted ? await provider.createPayment(params, `${this.hostname}/webhooks/epay`) :
                                              await provider.createPayment(params)
       return {

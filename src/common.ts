@@ -3,7 +3,6 @@ import { CurrencyCode } from "./currency"
 import AlipaySdk from "alipay-sdk"
 import WxPay from 'wechatpay-node-v3'
 
-
 export type ChargeCreateParams = {
   title: string,
   amount: number,
@@ -57,11 +56,12 @@ export type PayshiftEventName = 'payment_intent.succeeded' | 'payment_intent.cre
 'invoice.created' | 'invoice.finalized' | 'invoice.finalization_failed' | 'invoice.paid'
 
 
-export type PayshiftProviderName = 'alipay' | 'wechat_pay' | 'stripe' | 'paypal' | 'epay'
+export type PayshiftProviderName = 'alipay' | 'wechat_pay' | 'stripe' | 'paypal' | 'epay' | 'epay_cluster'
 
 
 export type PayshiftChannel = 'stripe_web' | 'alipay_web' | 'wechat_qrcode' |
-'wechat_mobile_web' | 'alipay_mobile_web' | 'epay_alipay' | 'epay_wechat_pay'
+'wechat_mobile_web' | 'alipay_mobile_web' | 'epay_alipay' | 'epay_wechat_pay' |
+'epay_cluster_alipay' | 'epay_cluster_wechat_pay'
 
 
 export type PayshiftOptions = {

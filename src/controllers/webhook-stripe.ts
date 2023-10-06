@@ -9,6 +9,9 @@ export const onStripeEvent = async function (req: Request, res: Response, next: 
   let event
 
   try {
+    if (!res.locals.endpointSecret) {
+      throw new Error('no endpoint secret')
+    }
     event = await sdk.webhooks.constructEventAsync(req.body, sig, res.locals.endpointSecret)
   } catch (err) {
     let message = ''

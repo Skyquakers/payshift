@@ -10,22 +10,32 @@ unified payment api for multiple payment processors
 - Stripe
 - Paypal
 - EPay
+- Multiple EPay instances with round robin algorithm (most common case)
 
 ## Usage
 
 ```javascript
-import { Payshift, AlipayProvider, StripeProvider, WechatPayProvider } from "payshift"
+import {
+  Payshift,
+  AlipayProvider,
+  StripeProvider,
+  WechatPayProvider,
+  EPayProvider,
+  EPayClusterProvider
+} from "payshift"
 import { privateKeyPath, alipayPublicKeyPath, appId } from "your alipay config"
 import { testKey, endpointSecret } from "your stripe config"
 import { apiKey, mcid, publicKeyPath } from "your wechatpay config"
-import { pid, key } from "your epay config"
+import { pid, key, endpoint } from "your epay config"
 
 const alipay = new AlipayProvider(appId, privateKeyPath, alipayPublicKeyPath)
 const stripe = new StripeProvider(testKey)
 const wechat = new WechatPayProvider(appId, mcid, publicKeyPath, privateKeyPath, apiKey)
-const epay = new EPayProvider(pid, key)
+const epay = new EPayProvider(endpoint, pid, key)
+const anotherEPay = new EPayProvider(anotherEndpoint, anotherPid, anotherKey)
+const epayCluster = new EPayClusterProvder([epay, anotherEPay])
 
-const payshift = new Payshift([alipay, stripe, wechat, epay], {
+const payshift = new Payshift([alipay, stripe, wechat, epay, epayCluster], {
   stripeEndpointSecret: endpointSecret
 })
 // webhooks server, used for notify_url for some payments
@@ -38,4 +48,49 @@ payshit.usedb()
 payshift.on('charge.succeeded', event => {
   // handle event
 })
+```
+
+
+Then
+
+```javascript
+// depending on your channel, res varys
+const res = await payshift.createCharge({
+  outTradeNo: '123123123',
+  title: 'item',
+  amount: 1,
+  channel: 'alipay_mobile_web',
+  currency: CurrencyCode.CNY,
+  returnUrl: 'http://taobao.com',
+  clientIp: '127.0.0.1',
+})
+
+// in this case for alipay_mobile_web, res.data is a string of url
+return res.data
+```
+
+
+## Supported Oayment Channels
+
+```typescript
+type PayshiftChannel = 'stripe_web' | 'alipay_web' | 'wechat_qrcode' |
+'wechat_mobile_web' | 'alipay_mobile_web' | 'epay_alipay' | 'epay_wechat_pay' |
+'epay_cluster_alipay' | 'epay_cluster_wechat_pay'
+```
+
+## Using Provider Alone
+
+Of course you can use provider independently
+
+```javascript
+const provider = new StripeProvider(testKey)
+const accountId = await provider.createAccount({
+  country: 'JP',
+  type: 'express',
+  business_type: 'individual',
+  capabilities: { transfers: { requested: true }},
+  tos_acceptance: { service_agreement: 'recipient' },
+})
+const url = await provider.createAccountLink(accountId, 'http://taobao.com', 'http://taobao.com')
+console.log(url)
 ```

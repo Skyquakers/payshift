@@ -1,13 +1,13 @@
 import { expect } from "chai"
 import { EPayProvider, Payshift, CurrencyCode } from "../src/index"
-import { pid, key } from "../certs/epay/secret"
+import { pid, key, endpoint } from "../certs/epay/secret"
 
-const provider = new EPayProvider('https://pay.cjyzf.com/', pid, key)
+const provider = new EPayProvider(endpoint, pid, key, 'http://taobao.com')
 const payshift = new Payshift([provider])
 
 describe('EPayProvider', function () {
   it('create payment should return a result', async function () {
-    const out_trade_no = 'ALIPfdf1211sdfsd12gfddsgs3'
+    const out_trade_no = 'ALIPfdf1211sdfsd12gfddsgs4'
     const subject = 'abc'
     const body = '234'
     const total_amount = 1

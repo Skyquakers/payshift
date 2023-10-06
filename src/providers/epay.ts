@@ -2,7 +2,7 @@ import type { ChargeCreateParams, IPaymentProvidable, PayshiftProviderName } fro
 import axios, { AxiosResponse } from 'axios'
 import { createHash } from 'crypto'
 
-interface EPayPaymentResult {
+export interface EPayPaymentResult {
   code: number
   msg: string
   trade_no: string
@@ -17,6 +17,7 @@ type EPayDevice = 'pc' | 'mobile' | 'qq' | 'wechat' | 'alipay'
 
 interface EPayPaymentParams {
   pid: number,
+  type: EPayType,
   out_trade_no: string,
   notify_url: string,
   return_url?: string,
@@ -27,7 +28,6 @@ interface EPayPaymentParams {
   param?: string,
   sign: string,
   sign_type: 'MD5',
-  type: EPayType,
 }
 
 type PresignedEPayPaymentParams = Omit<EPayPaymentParams, 'sign'>
@@ -37,34 +37,33 @@ export interface EPayMetaParams {
   clientip: string
 }
 
-let cachedKey: string = ''
-
-export const sign = function(data: PresignedEPayPaymentParams, key?: string): string {
+export const sign = function(data: PresignedEPayPaymentParams, epayKey: string): string {
   const keys: (keyof PresignedEPayPaymentParams)[] = []
-  const pairs: [keyof PresignedEPayPaymentParams, string][] = []
-
-  if (key) {
-    cachedKey = key    
-  }
+  let phrase: string = ''
 
   for (const key of Object.keys(data) as (keyof PresignedEPayPaymentParams)[]) {
-    keys.push(key)
+    if (key !== 'sign_type' && data[key]) {
+      keys.push(key)      
+    }
   }
 
-  for (const key of keys.sort()) { 
-    pairs.push([key, String(data[key])])
+  for (const [index, key] of keys.sort().entries()) { 
+    phrase += `${key}=${data[key]}`
+    if (index !== keys.length - 1) {
+      phrase += '&'
+    }
   }
 
-  const params = new URLSearchParams(pairs)
+  phrase += epayKey
 
-  return createHash('md5').update(`${params.toString()}${cachedKey}`).digest('hex')
+  return createHash('md5').update(phrase).digest('hex')
 }
 
 
 export class EPayProvider implements IPaymentProvidable {
   public name: PayshiftProviderName = 'epay'
-  private pid: number
-  private key: string
+  public pid: number
+  public key: string
   private endpoint: string
   private notifyUrl?: string
 
@@ -79,11 +78,17 @@ export class EPayProvider implements IPaymentProvidable {
   public async createPayment (
     charge: ChargeCreateParams,
     notifyUrl?: string): Promise<Pick<EPayPaymentResult, 'payurl' | 'qrcode' | 'urlscheme'>> {
-    const type: EPayType = charge.channel === 'epay_alipay' ? 'alipay' : 'wxpay'
+    let type: EPayType | undefined = undefined
 
-    const notify_url = notifyUrl ?? this.notifyUrl ?? ''
+    if (charge.channel === 'epay_alipay' || charge.channel === 'epay_cluster_alipay') {
+      type = 'alipay'
+    } else {
+      type = 'wxpay'
+    }
 
-    const data: Omit<EPayPaymentParams, 'sign'> = {
+    const notify_url = notifyUrl ?? this.notifyUrl ?? 'http://taobao.com'
+
+    const data: PresignedEPayPaymentParams = {
       pid: this.pid,
       out_trade_no: charge.outTradeNo,
       notify_url,
@@ -99,26 +104,48 @@ export class EPayProvider implements IPaymentProvidable {
       })
     }
 
-    const finalData = {
+    const finalData: EPayPaymentParams = {
       ...data,
       sign: sign(data, this.key)
     }
 
-    console.log(finalData)
+    const url = new URL('/mapi.php', this.endpoint)
+
+    const unullableData: Record<string, string> = Object.entries(finalData).reduce((acc, [key, value]) => {
+      if (value !== undefined) {
+        acc[key] = String(value)
+      }
+      return acc
+    }, {} as Record<string, string>)
+
+    const formString = new URLSearchParams(unullableData).toString()
 
     const res = await axios.post<EPayPaymentParams, AxiosResponse<EPayPaymentResult>>(
-      `${this.endpoint}/mapi.php`,
-      finalData
+      url.toString(),
+      formString
     )
 
     if (res.data.code !== 1) {
-      throw new Error(res.data.msg)
+      if (res.data.msg) {
+        throw new Error(res.data.msg)
+      }
+      throw new Error(JSON.stringify(res.data))
     }
 
-    return {
-      urlscheme: res.data.urlscheme,
-      payurl: res.data.payurl,
-      qrcode: res.data.qrcode
+    const result: Pick<EPayPaymentResult, 'payurl' | 'qrcode' | 'urlscheme'> = {}
+
+    if (res.data.urlscheme) {
+      result.urlscheme = res.data.urlscheme
     }
+
+    if (res.data.payurl) {
+      result.payurl = res.data.payurl
+    }
+
+    if (res.data.qrcode) {
+      result.qrcode = res.data.qrcode
+    }
+
+    return result
   }
 }
