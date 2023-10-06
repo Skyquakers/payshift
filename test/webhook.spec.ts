@@ -30,7 +30,7 @@ describe('Webhooks', function () {
           if (err) {
             console.error(err)
           }
-          expect(res.text).to.equal('fail')
+          expect(res.status).to.equal(400)
           done()
         })
   })
@@ -44,6 +44,19 @@ describe('Webhooks', function () {
           }
           
           expect(res.body.code).to.equal('FAIL')
+          done()
+        })
+  })
+
+  it('should return fail because it\'s not sent from epay', function (done) {
+    chai.request(payshift.webserver)
+        .post('/webhooks/epay')
+        .end((err, res) => {
+          if (err) {
+            console.error(err)
+          }
+          
+          expect(res.text).to.equal('fail')
           done()
         })
   })
