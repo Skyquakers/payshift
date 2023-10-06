@@ -70,7 +70,7 @@ return res.data
 ```
 
 
-## Supported Oayment Channels
+## Supported Payment Channels
 
 ```typescript
 type PayshiftChannel = 'stripe_web' | 'alipay_web' | 'wechat_qrcode' |
