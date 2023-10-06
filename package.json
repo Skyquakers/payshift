@@ -6,6 +6,7 @@
   "typings": "dist/src/index.d.ts",
   "scripts": {
     "test": "npm run build && npx mocha dist/test/*.js --timeout 10000",
+    "test-epay": "npm run build && npx mocha dist/test/epay.spec.js --timeout 10000",
     "build": "npx tsc",
     "dev": "npx ts-node src/dev.ts",
     "start": "node dist/index.js"

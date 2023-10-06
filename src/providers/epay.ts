@@ -99,12 +99,16 @@ export class EPayProvider implements IPaymentProvidable {
       })
     }
 
+    const finalData = {
+      ...data,
+      sign: sign(data, this.key)
+    }
+
+    console.log(finalData)
+
     const res = await axios.post<EPayPaymentParams, AxiosResponse<EPayPaymentResult>>(
       `${this.endpoint}/mapi.php`,
-      {
-        ...data,
-        sign: sign(data, this.key)
-      }
+      finalData
     )
 
     if (res.data.code !== 1) {
