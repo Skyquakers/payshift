@@ -31,7 +31,7 @@ export const onEPayEvent = async function (req: Request, res: Response, next: Ne
             clientip: meta.clientip,
           }),
         }, epay.key)
-
+        console.log(`clientSign for ${epay.endpoint}`, clientSign)
         if (clientSign === serverSign) {
           verified = true
           break
@@ -57,7 +57,7 @@ export const onEPayEvent = async function (req: Request, res: Response, next: Ne
       outTradeNo: out_trade_no as string,
       title: title as string,
       currency: CurrencyCode.CNY,
-      provider: 'alipay',
+      provider: 'epay',
       name,
     })
 

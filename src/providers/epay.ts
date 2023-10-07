@@ -64,7 +64,7 @@ export class EPayProvider implements IPaymentProvidable {
   public name: PayshiftProviderName = 'epay'
   public pid: number
   public key: string
-  private endpoint: string
+  public endpoint: string
   private notifyUrl?: string
 
   constructor (endpoint: string, pid: number, key: string, notifyUrl?: string) {
@@ -92,6 +92,7 @@ export class EPayProvider implements IPaymentProvidable {
       pid: this.pid,
       out_trade_no: charge.outTradeNo,
       notify_url,
+      return_url: charge.returnUrl,
       name: charge.title,
       money: (charge.amount / 100).toFixed(2),
       clientip: charge.clientIp,
