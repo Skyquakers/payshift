@@ -30,11 +30,12 @@ interface EPayPaymentParams {
   sign_type: 'MD5',
 }
 
-type PresignedEPayPaymentParams = Omit<EPayPaymentParams, 'sign'>
+export type PresignedEPayPaymentParams = Omit<EPayPaymentParams, 'sign'>
 
 export interface EPayMetaParams {
   notify_url: string
   clientip: string
+  return_url: string
 }
 
 export const sign = function(data: PresignedEPayPaymentParams, epayKey: string): string {
@@ -101,7 +102,8 @@ export class EPayProvider implements IPaymentProvidable {
       type,
       param: JSON.stringify({
         notify_url,
-        clientip: charge.clientIp
+        clientip: charge.clientIp,
+        return_url: charge.returnUrl
       })
     }
 
