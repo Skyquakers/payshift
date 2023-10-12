@@ -2,6 +2,11 @@
 
 unified payment api for multiple payment processors
 
+## Installation
+
+```bash
+npm install payshift
+```
 
 ## Supported Payment Processors
 
