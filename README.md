@@ -45,9 +45,25 @@ payshift.startWebServer('http://localhost:3000', 3000)
 payshit.usedb()
 
 // handle webhooks using the internal webhook server
-payshift.on('charge.succeeded', event => {
-  // handle event
+payshift.on('charge.succeeded', async event => {
+  // handle event, eg. update the status of your order
+  // throwing any error will fail the webhook to the payment processor as well
 })
+```
+
+Where `event` is a `PayshiftEvent`
+
+```typescript
+type PayshiftEvent = {
+  amount?: number, // in cents
+  title?: string,
+  outTradeNo?: string,
+  tradeNo?: string,
+  provider: PayshiftProviderName,
+  name: PayshiftEventName,
+  currency?: CurrencyCode,
+  accountId?: string,
+}
 ```
 
 
