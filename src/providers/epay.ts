@@ -15,7 +15,7 @@ export type EPayType = 'alipay' | 'wxpay' | 'qqpay' | 'bank' | 'jdpay' | 'paypal
 
 type EPayDevice = 'pc' | 'mobile' | 'qq' | 'wechat' | 'alipay'
 
-interface EPayPaymentParams {
+export interface EPayPaymentParams {
   pid: number,
   type: EPayType,
   out_trade_no: string,

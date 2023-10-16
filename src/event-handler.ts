@@ -3,7 +3,7 @@ import { CurrencyCode } from "./currency"
 
 export const callbacks:  Map<string, Function[]> = new Map()
 
-type PayshiftEvent = {
+export type PayshiftEvent = {
   amount?: number, // in cents
   title?: string,
   outTradeNo?: string,

@@ -1,6 +1,6 @@
 import express, { Express } from 'express'
 import { router as webhookRouter } from './routes/webhook'
-import { register, unregister } from './event-handler'
+import { type PayshiftEvent, register, unregister } from './event-handler'
 import mongoose from 'mongoose'
 import { AlipayProvider, EPayProvider, StripeProvider, WechatPayProvider } from './index'
 import { chargeModel } from './models/charge'
@@ -93,7 +93,7 @@ export class Payshift {
     this.webServerStarted = true
   }
 
-  public on(event: PayshiftEventName, callback: Function) {
+  public on(event: PayshiftEventName, callback: (event: PayshiftEvent, ...args: any) => Promise<void>) {
     register(event, callback)
   }
 
