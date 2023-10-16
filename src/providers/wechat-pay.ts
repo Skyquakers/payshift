@@ -9,6 +9,7 @@ import {
 export class WechatPayProvider implements IPaymentProvidable {
   public sdk: WxPay
   public name: PayshiftProviderName = 'wechat_pay'
+  public apiKey: string
   private notifyUrl?: string
 
   constructor (appId: string, mchid: string, publicKeyPath: string, privateKeyPath: string, apikey: string, notifyUrl?: string) {
@@ -20,6 +21,7 @@ export class WechatPayProvider implements IPaymentProvidable {
       key: apikey,
     })
     this.notifyUrl = notifyUrl
+    this.apiKey = apikey
   }
 
   public async createMobilePaymentLink (charge: ChargeCreateParams, notifyUrl?: string): Promise<string> {

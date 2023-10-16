@@ -2,8 +2,8 @@ import WxPay from 'wechatpay-node-v3'
 import { NextFunction, Request, Response } from "express"
 import { trigger } from "../event-handler"
 import { EventModel } from "../models/event"
-import { apiKey } from "../configs/wechat-pay"
 import { PayshiftEventName } from '../common'
+import { WechatPayProvider } from '../providers/wechat-pay'
 
 
 // https://pay.weixin.qq.com/wiki/doc/api_external/ch/apis/chapter3_3_11.shtml
@@ -24,13 +24,14 @@ export const onWechatPayEvent = async function (req: Request, res: Response, nex
       })
     }
 
-    const sdk = res.locals.wechatPay?.sdk as WxPay
+    const provider = res.locals.wechatPay as WechatPayProvider
+    const sdk = provider.sdk as WxPay
     const {
       ciphertext,
       associated_data,
       nonce,
     } = resource
-    const result = sdk.decipher_gcm(ciphertext, associated_data, nonce, apiKey)
+    const result = sdk.decipher_gcm(ciphertext, associated_data, nonce, provider.apiKey)
     const {
       trade_state,
       out_trade_no,
