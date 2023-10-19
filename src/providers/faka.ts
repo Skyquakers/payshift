@@ -9,7 +9,7 @@ interface FakaPaymentResult {
 
 
 export class FakaProvider implements IPaymentProvidable {
-  public name: PayshiftProviderName = 'faka'
+  public name: PayshiftProviderName = 'order2faka'
   public key: string
   public endpoint: string
   public merchantId: string

@@ -75,7 +75,7 @@ export class Payshift {
           res.locals.epays = [provider]
         } else if (provider.name === 'epay_cluster') {
           res.locals.epays = (provider as EPayClusterProvider).providers
-        } else if (provider.name === 'faka') {
+        } else if (provider.name === 'order2faka') {
           res.locals.faka = provider
         }
 
@@ -189,8 +189,8 @@ export class Payshift {
         data: result,
         chargeId,
       }
-    } else if (chargeObj.channel === 'faka') {
-      const provider = this.getProvider('faka') as FakaProvider
+    } else if (chargeObj.channel === 'order2faka') {
+      const provider = this.getProvider('order2faka') as FakaProvider
       const result = this.webServerStarted ? await provider.createPayment(params, `${this.hostname}/webhooks/faka`) :
                                              await provider.createPayment(params)
       return {

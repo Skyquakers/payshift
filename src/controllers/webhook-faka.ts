@@ -28,7 +28,7 @@ export const onFakaEvent = async function (req: Request, res: Response, next: Ne
       outTradeNo,
       title,
       currency,
-      provider: 'faka',
+      provider: 'order2faka',
       name,
     })
 
@@ -38,7 +38,7 @@ export const onFakaEvent = async function (req: Request, res: Response, next: Ne
         tradeNo,
         name,
         currency,
-        provider: 'faka',
+        provider: 'order2faka',
         title,
       })
 
