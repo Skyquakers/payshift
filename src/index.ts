@@ -4,6 +4,7 @@ export { StripeProvider } from './providers/stripe'
 export { PaypalProvider } from './providers/paypal'
 export { EPayProvider } from './providers/epay'
 export { EPayClusterProvider } from './providers/epay-cluster'
+export { FakaProvider } from './providers/faka'
 export { Payshift } from './payshift'
 export { CurrencyCode } from './currency'
 
