@@ -1,7 +1,7 @@
-import { Schema, model } from "mongoose"
+import { Model, Schema, model, models } from "mongoose"
+import { PayshiftEvent } from "../event-handler"
 
-
-const eventSchema = new Schema({
+const eventSchema = new Schema<PayshiftEvent>({
   amount: {
     required: true,
     type: Number,
@@ -34,4 +34,5 @@ const eventSchema = new Schema({
 })
 
 
-export const EventModel = model('Event', eventSchema)
+export const EventModel: Model<PayshiftEvent> =
+  models.Event || model('Event', eventSchema)

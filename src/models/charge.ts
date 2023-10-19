@@ -1,5 +1,16 @@
-import { Schema, model } from "mongoose"
+import { Model, Schema, model, models } from "mongoose"
 
+interface Charge {
+  amount: number
+  outTradeNo: string
+  tradeNo?: string
+  title: string
+  description?: string
+  currency: string
+  channel: string
+  clientIp?: string
+  createdAt?: Date
+}
 
 const chargeSchema = new Schema({
   amount: {
@@ -42,5 +53,5 @@ const chargeSchema = new Schema({
   }
 })
 
-
-export const chargeModel = model('Charge', chargeSchema)
+export const ChargeModel: Model<Charge> =
+  models.Charge || model('Charge', chargeSchema)

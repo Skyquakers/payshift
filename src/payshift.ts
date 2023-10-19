@@ -3,7 +3,7 @@ import { router as webhookRouter } from './routes/webhook'
 import { type PayshiftEvent, register, unregister } from './event-handler'
 import mongoose from 'mongoose'
 import { AlipayProvider, EPayProvider, FakaProvider, StripeProvider, WechatPayProvider } from './index'
-import { chargeModel } from './models/charge'
+import { ChargeModel } from './models/charge'
 import {
   ChargeCreateParams, ChargeObject, ChargeResponse,
   IPaymentProvidable, PayshiftEventName, PayshiftOptions,
@@ -117,7 +117,7 @@ export class Payshift {
     let chargeId: string | undefined = undefined
     if (this.dbUsed) {
       const chargeObjectCopy = JSON.parse(JSON.stringify(chargeObj))
-      const charge = new chargeModel(chargeObjectCopy)
+      const charge = new ChargeModel(chargeObjectCopy)
       const savedCharge = await charge.save()
       chargeId = savedCharge._id.toString()
     }

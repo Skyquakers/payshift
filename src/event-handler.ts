@@ -12,6 +12,8 @@ export type PayshiftEvent = {
   name: PayshiftEventName,
   currency?: CurrencyCode,
   accountId?: string,
+  settled?: boolean,
+  createdAt?: Date
 }
 
 
