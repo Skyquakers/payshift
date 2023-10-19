@@ -2,7 +2,7 @@ import express, { Express } from 'express'
 import { router as webhookRouter } from './routes/webhook'
 import { type PayshiftEvent, register, unregister } from './event-handler'
 import mongoose from 'mongoose'
-import { AlipayProvider, EPayProvider, StripeProvider, WechatPayProvider } from './index'
+import { AlipayProvider, EPayProvider, FakaProvider, StripeProvider, WechatPayProvider } from './index'
 import { chargeModel } from './models/charge'
 import {
   ChargeCreateParams, ChargeObject, ChargeResponse,
@@ -75,6 +75,8 @@ export class Payshift {
           res.locals.epays = [provider]
         } else if (provider.name === 'epay_cluster') {
           res.locals.epays = (provider as EPayClusterProvider).providers
+        } else if (provider.name === 'faka') {
+          res.locals.faka = provider
         }
 
         next()
@@ -186,6 +188,15 @@ export class Payshift {
         charge: chargeObj,
         data: result,
         chargeId,
+      }
+    } else if (chargeObj.channel === 'faka') {
+      const provider = this.getProvider('faka') as FakaProvider
+      const result = this.webServerStarted ? await provider.createPayment(params, `${this.hostname}/webhooks/faka`) :
+                                             await provider.createPayment(params)
+      return {
+        charge: chargeObj,
+        data: result,
+        chargeId
       }
     }
 

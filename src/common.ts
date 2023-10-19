@@ -61,7 +61,7 @@ export type PayshiftProviderName = 'alipay' | 'wechat_pay' | 'stripe' | 'paypal'
 
 export type PayshiftChannel = 'stripe_web' | 'alipay_web' | 'wechat_qrcode' |
 'wechat_mobile_web' | 'alipay_mobile_web' | 'epay_alipay' | 'epay_wechat_pay' |
-'epay_cluster_alipay' | 'epay_cluster_wechat_pay'
+'epay_cluster_alipay' | 'epay_cluster_wechat_pay' | 'faka'
 
 
 export type PayshiftOptions = {
