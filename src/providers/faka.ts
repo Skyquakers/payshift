@@ -21,7 +21,7 @@ export class FakaProvider implements IPaymentProvidable {
   }
 
   async createPayment (params: ChargeCreateParams, notifyUrl?: string): Promise<FakaPaymentResult> {
-    const url = new URL('/orders', this.endpoint).toString()
+    const url = new URL('/api/orders', this.endpoint).toString()
     const res = await axios.post(url, {
       title: params.title,
       amount: params.amount,
@@ -32,7 +32,8 @@ export class FakaProvider implements IPaymentProvidable {
       userAgent: params.userAgent,
       merchantId: this.merchantId,
       merchantKeyHash: createHash('md5').update(`${params.outTradeNo}${this.key}`).digest('hex'),
-      notifyUrl
+      notifyUrl,
+      currency: params.currency,
     })
 
     return {
