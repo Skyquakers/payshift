@@ -13,11 +13,11 @@ import { EPayClusterProvider } from './providers/epay-cluster'
 
 export class Payshift {
   public webserver: Express
+  public hostname?: string
   private dbUsed: boolean
   private providers: IPaymentProvidable[]
   private webServerStarted: boolean
   private stripeEndpointSecret?: string
-  private hostname?: string
 
   constructor (providers: IPaymentProvidable[] = [], options: PayshiftOptions = {}) {
     this.providers = providers
