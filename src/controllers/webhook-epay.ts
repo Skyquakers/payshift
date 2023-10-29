@@ -6,7 +6,7 @@ import { EventModel } from "../models/event"
 import { PayshiftEventName } from "../common"
 
 
-// The sign sent back from epay instances sometimes does not match from what we sent them
+// The sign sent back from epay instances does not match from what we sent them
 // thus we can't verify at all
 const dangerouslySkipVerify = true
 
