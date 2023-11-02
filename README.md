@@ -15,7 +15,7 @@ npm install payshift
 - Stripe
 - Paypal
 - EPay
-- Multiple EPay instances with round robin algorithm (most common case)
+- Multiple EPay instances with random pick on every pay
 
 ## Usage
 
