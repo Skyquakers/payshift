@@ -14,6 +14,7 @@ export class EPayClusterProvider implements IPaymentProvidable {
     charge: ChargeCreateParams,
     notifyUrl?: string): Promise<Pick<EPayPaymentResult, 'payurl' | 'qrcode' | 'urlscheme'>> {
     const provider = this.providers[Math.floor(Math.random() * this.providers.length)]
+    console.log('use epay provider', provider.endpoint)
     return await provider.createPayment(charge, notifyUrl)
   }
 }

@@ -104,102 +104,112 @@ export class Payshift {
   }
 
   public async createCharge (params: ChargeCreateParams): Promise<ChargeResponse> {
-    const chargeObj: ChargeObject = {
-      amount: params.amount,
-      title: params.title,
-      outTradeNo: params.outTradeNo,
-      channel: params.channel,
-      currency: params.currency,
-      clientIp: params.clientIp,
-      userAgent: params.userAgent
-    }
-
-    let chargeId: string | undefined = undefined
-    if (this.dbUsed) {
-      const chargeObjectCopy = JSON.parse(JSON.stringify(chargeObj))
-      const charge = new ChargeModel(chargeObjectCopy)
-      const savedCharge = await charge.save()
-      chargeId = savedCharge._id.toString()
-    }
-
-    if (chargeObj.channel === 'stripe_web') {
-      const provider = this.getProvider('stripe') as StripeProvider
-      const paymentIntent = await provider.createPaymentIntent({
-        automatic_payment_methods: {
-          enabled: true,
-        },
-        currency: chargeObj.currency.toLowerCase(),
+    try {
+      const chargeObj: ChargeObject = {
         amount: params.amount,
-      })
+        title: params.title,
+        outTradeNo: params.outTradeNo,
+        channel: params.channel,
+        currency: params.currency,
+        clientIp: params.clientIp,
+        userAgent: params.userAgent
+      }
 
-      return {
-        charge: chargeObj,
-        data: paymentIntent,
-        chargeId,
+      let chargeId: string | undefined = undefined
+      if (this.dbUsed) {
+        const chargeObjectCopy = JSON.parse(JSON.stringify(chargeObj))
+        const charge = new ChargeModel(chargeObjectCopy)
+        const savedCharge = await charge.save()
+        chargeId = savedCharge._id.toString()
       }
-    } else if (chargeObj.channel === 'alipay_web') {
-      const provider = this.getProvider('alipay') as AlipayProvider
-      const url = await provider.createDesktopPaymentLink(params)
-      return {
-        charge: chargeObj,
-        data: url,
-        chargeId,
+
+      if (chargeObj.channel === 'stripe_web') {
+        const provider = this.getProvider('stripe') as StripeProvider
+        const paymentIntent = await provider.createPaymentIntent({
+          automatic_payment_methods: {
+            enabled: true,
+          },
+          currency: chargeObj.currency.toLowerCase(),
+          amount: params.amount,
+        })
+
+        return {
+          charge: chargeObj,
+          data: paymentIntent,
+          chargeId,
+        }
+      } else if (chargeObj.channel === 'alipay_web') {
+        const provider = this.getProvider('alipay') as AlipayProvider
+        const url = await provider.createDesktopPaymentLink(params)
+        return {
+          charge: chargeObj,
+          data: url,
+          chargeId,
+        }
+      } else if (chargeObj.channel === 'alipay_mobile_web') {
+        const provider = this.getProvider('alipay') as AlipayProvider
+        const url = await provider.createMobilePaymentLink(params)
+        return {
+          charge: chargeObj,
+          data: url,
+          chargeId,
+        }
+      } else if (chargeObj.channel === 'wechat_mobile_web') {
+        const provider = this.getProvider('wechat_pay') as WechatPayProvider
+        const url = this.hostname
+          ? await provider.createMobilePaymentLink(params, `${this.hostname}/webhooks/wechat_pay`)
+          : await provider.createMobilePaymentLink(params)
+        return {
+          charge: chargeObj,
+          data: url,
+          chargeId,
+        }
+      } else if (chargeObj.channel === 'wechat_qrcode') {
+        const provider = this.getProvider('wechat_pay') as WechatPayProvider
+        const url = this.hostname
+          ? await provider.createPaymentQrcodeUrl(params, `${this.hostname}/webhooks/wechat_pay`)
+          : await provider.createPaymentQrcodeUrl(params)
+        return {
+          charge: chargeObj,
+          data: url,
+          chargeId,
+        }
+      } else if (chargeObj.channel === 'epay_alipay' || chargeObj.channel === 'epay_wechat_pay') {
+        const provider = this.getProvider('epay') as EPayProvider
+        const result = this.hostname
+          ? await provider.createPayment(params, `${this.hostname}/webhooks/epay`)
+          : await provider.createPayment(params)
+        return {
+          charge: chargeObj,
+          data: result,
+          chargeId,
+        }
+      } else if (chargeObj.channel === 'epay_cluster_alipay' || chargeObj.channel === 'epay_cluster_wechat_pay') {
+        const provider = this.getProvider('epay_cluster') as EPayClusterProvider
+        const result = this.hostname
+          ? await provider.createPayment(params, `${this.hostname}/webhooks/epay`)
+          : await provider.createPayment(params)
+        return {
+          charge: chargeObj,
+          data: result,
+          chargeId,
+        }
+      } else if (chargeObj.channel === 'order2faka') {
+        const provider = this.getProvider('order2faka') as FakaProvider
+        const result = this.hostname
+          ? await provider.createPayment(params, `${this.hostname}/webhooks/faka`)
+          : await provider.createPayment(params)
+        return {
+          charge: chargeObj,
+          data: result,
+          chargeId
+        }
       }
-    } else if (chargeObj.channel === 'alipay_mobile_web') {
-      const provider = this.getProvider('alipay') as AlipayProvider
-      const url = await provider.createMobilePaymentLink(params)
-      return {
-        charge: chargeObj,
-        data: url,
-        chargeId,
-      }
-    } else if (chargeObj.channel === 'wechat_mobile_web') {
-      const provider = this.getProvider('wechat_pay') as WechatPayProvider
-      const url = this.webServerStarted ? await provider.createMobilePaymentLink(params, `${this.hostname}/webhooks/wechat_pay`) :
-                                          await provider.createMobilePaymentLink(params)
-      return {
-        charge: chargeObj,
-        data: url,
-        chargeId,
-      }
-    } else if (chargeObj.channel === 'wechat_qrcode') {
-      const provider = this.getProvider('wechat_pay') as WechatPayProvider
-      const url = this.webServerStarted ? await provider.createPaymentQrcodeUrl(params, `${this.hostname}/webhooks/wechat_pay`) :
-                                          await provider.createPaymentQrcodeUrl(params)
-      return {
-        charge: chargeObj,
-        data: url,
-        chargeId,
-      }
-    } else if (chargeObj.channel === 'epay_alipay' || chargeObj.channel === 'epay_wechat_pay') {
-      const provider = this.getProvider('epay') as EPayProvider
-      const result = this.webServerStarted ? await provider.createPayment(params, `${this.hostname}/webhooks/epay`) :
-                                             await provider.createPayment(params)
-      return {
-        charge: chargeObj,
-        data: result,
-        chargeId,
-      }
-    } else if (chargeObj.channel === 'epay_cluster_alipay' || chargeObj.channel === 'epay_cluster_wechat_pay') {
-      const provider = this.getProvider('epay_cluster') as EPayClusterProvider
-      const result = this.webServerStarted ? await provider.createPayment(params, `${this.hostname}/webhooks/epay`) :
-                                             await provider.createPayment(params)
-      return {
-        charge: chargeObj,
-        data: result,
-        chargeId,
-      }
-    } else if (chargeObj.channel === 'order2faka') {
-      const provider = this.getProvider('order2faka') as FakaProvider
-      const result = this.webServerStarted ? await provider.createPayment(params, `${this.hostname}/webhooks/faka`) :
-                                             await provider.createPayment(params)
-      return {
-        charge: chargeObj,
-        data: result,
-        chargeId
-      }
+
+      throw new Error(`unknown channel ${chargeObj.channel}`) 
+    } catch (err) {
+      console.error(err)
+      throw err
     }
-
-    throw new Error(`unknown channel ${chargeObj.channel}`)
   }
 }
