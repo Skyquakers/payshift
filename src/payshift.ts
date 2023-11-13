@@ -37,6 +37,16 @@ export class Payshift {
     throw new Error(`no such provider ${name}`)
   }
 
+  public updateProvider(name: PayshiftProviderName, provider: IPaymentProvidable) {
+    for (const [index, runningProvider] of this.providers.entries()) {
+      if (runningProvider.name === name) {
+        this.providers[index] = provider
+      }
+    }
+
+    throw new Error(`no such provider ${name}`)
+  }
+
   public async usedb(connectionString: string = 'mongodb://mongodb:27017/payshift', options?: mongoose.ConnectOptions) {
     try {
       console.log('starting connecting to mongodb')
