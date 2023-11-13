@@ -40,7 +40,7 @@ export class Payshift {
   public updateProvider(name: PayshiftProviderName, provider: IPaymentProvidable) {
     for (const [index, runningProvider] of this.providers.entries()) {
       if (runningProvider.name === name) {
-        this.providers[index] = provider
+        return this.providers[index] = provider
       }
     }
 
