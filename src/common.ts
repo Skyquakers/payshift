@@ -50,7 +50,7 @@ export type PayshiftEventName = 'payment_intent.succeeded' | 'payment_intent.cre
 'charge.succeeded' | 'charge.created' | 'charge.failed' |
 'account.updated' | 'account.application.deauthorized' | 'account.external_account.updated' |
 'balance.available' |
-'payout.failed' |
+'payout.failed' | 'payout.paid' |
 'identity.verification_session.verified' | 'identity.verification_session.requires_input' | 'identity.verification_session.created' |
 'customer.subscription.updated' | 'customer.subscription.deleted' |
 'invoice.created' | 'invoice.finalized' | 'invoice.finalization_failed' | 'invoice.paid'

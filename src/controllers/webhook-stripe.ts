@@ -72,6 +72,13 @@ export const onStripeEvent = async function (req: Request, res: Response, next: 
         name: 'invoice.finalized',
         provider: 'stripe',
       }, invoice)
+    } else if (event.type === 'payout.paid' ||
+               event.type === 'payout.failed') {
+      const payout = event.data.object as Stripe.Payout
+      await trigger(event.type, {
+        name: event.type,
+        provider: 'stripe'
+      }, payout)
     } else {
       console.log(event.type)
       console.log(event.data)
