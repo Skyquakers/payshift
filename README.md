@@ -14,7 +14,7 @@ npm install payshift
 - Wechat Pay
 - Stripe
 - Paypal
-- EPay (aka, 彩虹易支付, a common payment gateway of underground internet in China)
+- EPay
 - Multiple EPay instances with round robin algorithm to split your cashflow and risk
 
 ## Usage
