@@ -49,10 +49,10 @@ export class Payshift {
 
   public async usedb(connectionString: string = 'mongodb://mongodb:27017/payshift', options?: mongoose.ConnectOptions) {
     try {
-      console.log('starting connecting to mongodb')
+      console.log('[payshift]: starting connecting to mongodb')
       await mongoose.connect(connectionString, options)
       this.dbUsed = true
-      console.log('mongodb connected')
+      console.log('[payshift]: mongodb connected')
 
       if (this.webServerStarted) {
         this.webserver.use(function (req, res, next) {
@@ -95,7 +95,7 @@ export class Payshift {
 
     this.webserver.use('/webhooks', webhookRouter)
     this.webserver.listen(localPort)
-    console.log(`Payshift web server start listening on ${localPort}`)
+    console.log(`[payshift]: Payshift web server start listening on ${localPort}`)
 
     this.webserver.use(function (req, res, next) {
       res.locals.hostname = hostname

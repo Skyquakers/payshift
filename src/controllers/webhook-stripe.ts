@@ -80,8 +80,8 @@ export const onStripeEvent = async function (req: Request, res: Response, next: 
         provider: 'stripe'
       }, payout)
     } else {
-      console.log(event.type)
-      console.log(event.data)
+      console.log('[payshift]:', event.type)
+      console.log('[payshift]:', event.data)
     }
 
     return res.status(200).json({

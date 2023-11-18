@@ -23,8 +23,8 @@ export interface EPayPaymentParams {
   return_url?: string,
   name: string,
   money: string,
-  clientip: string,
-  device: EPayDevice,
+  clientip?: string,
+  device?: EPayDevice,
   param?: string,
   sign: string,
   sign_type: 'MD5',
@@ -87,7 +87,11 @@ export class EPayProvider implements IPaymentProvidable {
       type = 'wxpay'
     }
 
-    const notify_url = notifyUrl ?? this.notifyUrl ?? 'http://taobao.com'
+    const notify_url = notifyUrl ?? this.notifyUrl
+
+    if (!notify_url) {
+      throw new Error('missing notify url')
+    }
 
     const data: PresignedEPayPaymentParams = {
       pid: this.pid,
@@ -150,5 +154,43 @@ export class EPayProvider implements IPaymentProvidable {
     }
 
     return result
+  }
+
+
+  public async generateDesktopPaymentLink (
+    charge: ChargeCreateParams,
+    notifyUrl?: string): Promise<string> {
+    let type: EPayType | undefined = undefined
+
+    if (charge.channel === 'epay_alipay' || charge.channel === 'epay_cluster_alipay') {
+      type = 'alipay'
+    } else {
+      type = 'wxpay'
+    }
+    const notify_url = notifyUrl ?? this.notifyUrl ?? 'http://taobao.com'
+
+    const data: PresignedEPayPaymentParams = {
+      pid: this.pid,
+      type,
+      out_trade_no: charge.outTradeNo,
+      notify_url,
+      return_url: charge.returnUrl,
+      name: charge.title,
+      money: (charge.amount / 100).toFixed(2),
+      sign_type: 'MD5',
+    }
+
+    const finalData: EPayPaymentParams = {
+      ...data,
+      sign: sign(data, this.key)
+    }
+
+    const url = new URL('/submit.php', this.endpoint)
+
+    for (const [key, value] of Object.entries(finalData)) {
+      url.searchParams.set(key, value)
+    }
+
+    return url.toString()
   }
 }

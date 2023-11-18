@@ -47,7 +47,7 @@ export const onFakaEvent = async function (req: Request, res: Response, next: Ne
 
     return res.status(200).send('success')
   } catch (err) {
-    console.log('error occured in faka event:')
+    console.log('[payshift]: error occured in faka event:')
     console.error(err)
     res.status(500).send('fail')
   }

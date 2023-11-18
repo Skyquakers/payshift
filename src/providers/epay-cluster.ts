@@ -20,7 +20,17 @@ export class EPayClusterProvider implements IPaymentProvidable {
     const provider = this.providers[this.roundrobin]
     this.roundrobin += 1
     this.roundrobin %= this.roundrobinMax
-    console.log('use epay provider', provider.endpoint)
+    console.log('[payshift]: use epay provider', provider.endpoint)
     return await provider.createPayment(charge, notifyUrl)
+  }
+
+  public async generateDesktopPaymentLink(
+    charge: ChargeCreateParams,
+    notifyUrl?: string): Promise<string> {
+    const provider = this.providers[this.roundrobin]
+    this.roundrobin += 1
+    this.roundrobin %= this.roundrobinMax
+    console.log('[payshift]: use epay provider', provider.endpoint)
+    return await provider.generateDesktopPaymentLink(charge, notifyUrl)
   }
 }

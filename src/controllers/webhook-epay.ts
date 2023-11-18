@@ -49,7 +49,7 @@ export const onEPayEvent = async function (req: Request, res: Response, next: Ne
   
         for (const epay of res.locals.epays.values()) {
           const clientSign = sign(data, epay.key)
-          console.log(`clientSign for ${epay.endpoint}`, clientSign)
+          console.log(`[payshift]: clientSign for ${epay.endpoint}`, clientSign)
           if (clientSign === serverSign) {
             verified = true
             break
@@ -57,7 +57,7 @@ export const onEPayEvent = async function (req: Request, res: Response, next: Ne
         }
   
         if (!verified) {
-          console.log('serverSign', serverSign)
+          console.log('[payshift]: serverSign', serverSign)
           if (!dangerouslySkipVerify) {
             return res.status(401).json('sign check error')
           }
@@ -97,7 +97,7 @@ export const onEPayEvent = async function (req: Request, res: Response, next: Ne
 
     res.status(200).send('success')
   } catch (err) {
-    console.log('error occured in epay event:')
+    console.log('[payshift]: error occured in epay event:')
     console.error(err)
     res.status(500).send('fail')
   }

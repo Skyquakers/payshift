@@ -12,7 +12,7 @@ type AlipayNotifyStatus = 'TRADE_SUCCESS' | 'TRADE_FINISHED' | 'WAIT_BUYER_PAY' 
 // https://opendocs.alipay.com/open/203/105286
 // https://opendocs.alipay.com/support/01raw4
 export const onAlipayEvent = async function (req: Request, res: Response, next: NextFunction) {
-  console.log('onAlipayEvent')
+  console.log('[payshift]: onAlipayEvent')
   try {
     const sdk = res.locals.alipay?.sdk as AlipaySdk
     try {
@@ -67,7 +67,7 @@ export const onAlipayEvent = async function (req: Request, res: Response, next: 
 
     res.status(200).send('success')
   } catch (err) {
-    console.log('error occured in alipay event:')
+    console.log('[payshift]: error occured in alipay event:')
     console.error(err)
     res.status(500).send('fail')
   }

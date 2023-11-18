@@ -8,7 +8,7 @@ import { WechatPayProvider } from '../providers/wechat-pay'
 
 // https://pay.weixin.qq.com/wiki/doc/api_external/ch/apis/chapter3_3_11.shtml
 export const onWechatPayEvent = async function (req: Request, res: Response, next: NextFunction) {
-  console.log('onWechatPayEvent')
+  console.log('[payshift]: onWechatPayEvent')
   try {
     const {
       event_type,
@@ -71,7 +71,7 @@ export const onWechatPayEvent = async function (req: Request, res: Response, nex
       code: 'SUCCESS',
     })
   } catch (err) {
-    console.log('error occured in wechat event:')
+    console.log('[payshift]: error occured in wechat event:')
     console.error(err)
     return res.status(500).json({
       code: 'FAIL',
