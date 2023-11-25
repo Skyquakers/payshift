@@ -24,6 +24,13 @@ export const onStripeEvent = async function (req: Request, res: Response, next: 
     return res.status(400).send(message)
   }
 
+  if (process.env.NODE_ENV === 'production') {
+    if (!event.livemode) {
+      console.log('[payshift] received stripe test webhook in prod mode, ignoring...')
+      return
+    }
+  }
+
   try {
     if (event.type === 'account.updated') {
       const account = event.data.object as Stripe.Account
@@ -78,7 +85,7 @@ export const onStripeEvent = async function (req: Request, res: Response, next: 
       await trigger(event.type, {
         name: event.type,
         provider: 'stripe'
-      }, payout)
+      }, payout, event.account)
     } else {
       console.log('[payshift]:', event.type)
       console.log('[payshift]:', event.data)
