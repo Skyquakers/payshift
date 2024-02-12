@@ -27,7 +27,7 @@ export class Payshift {
     this.stripeEndpointSecret = options.stripeEndpointSecret
   }
 
-  private getProvider(name: PayshiftProviderName): IPaymentProvidable {
+  public getProvider(name: PayshiftProviderName): IPaymentProvidable {
     for (const provider of this.providers.values()) {
       if (provider.name === name) {
         return provider
@@ -44,7 +44,8 @@ export class Payshift {
       }
     }
 
-    throw new Error(`no such provider ${name}`)
+    // no such provider found, add it
+    this.providers.push(provider)
   }
 
   public async usedb(connectionString: string = 'mongodb://mongodb:27017/payshift', options?: mongoose.ConnectOptions) {

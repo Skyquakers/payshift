@@ -75,7 +75,7 @@ type PaypalSellerReceivableBreakdown = {
   },
 }
 
-export type PayPalOrder = {
+export type PaypalOrder = {
   create_time?: string,
   update_time?: string,
   id?: string,
@@ -398,7 +398,7 @@ export class PaypalProvider implements IPaymentProvidable {
 
   public async createPayment (
     charge: ChargeCreateParams,
-  ): Promise<PayPalOrder> {
+  ): Promise<PaypalOrder> {
     try {
       if (!this.accessToken) {
         await this.getAccessToken()
@@ -433,7 +433,7 @@ export class PaypalProvider implements IPaymentProvidable {
     }
   }
 
-  public async captureOrder (paypalOrderId: string) {
+  public async captureOrder (paypalOrderId: string): Promise<PaypalOrder> {
     try {
       if (!this.accessToken) {
         await this.getAccessToken()
