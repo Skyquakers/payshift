@@ -2,7 +2,7 @@ import express, { Express } from 'express'
 import { router as webhookRouter } from './routes/webhook'
 import { type PayshiftEvent, register, unregister } from './event-handler'
 import mongoose from 'mongoose'
-import { AlipayProvider, EPayProvider, FakaProvider, StripeProvider, WechatPayProvider } from './index'
+import { AlipayProvider, EPayProvider, FakaProvider, PaypalProvider, StripeProvider, WechatPayProvider } from './index'
 import { ChargeModel } from './models/charge'
 import {
   ChargeCreateParams, ChargeObject, ChargeResponse,
@@ -213,6 +213,15 @@ export class Payshift {
           charge: chargeObj,
           data: result,
           chargeId
+        }
+      } else if (chargeObj.channel === 'paypal') {
+        const provider = this.getProvider('paypal') as PaypalProvider
+        const paypalOrder = await provider.createPayment(params)
+
+        return {
+          charge: chargeObj,
+          data: paypalOrder,
+          chargeId,
         }
       }
 
