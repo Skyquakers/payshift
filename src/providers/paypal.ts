@@ -271,18 +271,14 @@ export class PaypalProvider implements IPaymentProvidable {
   private async getAccessToken () {
     const host = this.getAPIHost()
     const endpoint = new URL('/v1/oauth2/token', host).toString()
-    const params = new URLSearchParams({
-      grant_type: 'client_credentials'
-    }).toString()
+
+    const cipher = `${this.clientId}:${this.clientSecret}`
+    const base64 = Buffer.from(cipher).toString('base64')
 
     try {
-      const res = await axios.post(endpoint, params, {
-        auth: {
-          username: this.clientId,
-          password: this.clientSecret
-        },
+      const res = await axios.post(endpoint, 'grant_type=client_credentials', {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
+          Authorization: `Basic ${base64}`
         }
       })
   
@@ -292,7 +288,7 @@ export class PaypalProvider implements IPaymentProvidable {
       setTimeout(() => {
         this.accessToken = null
       }, (expiresIn - 3) * 1000)
-    } catch (err) {
+    } catch (err: any) {
       console.error(err)
       throw err
     }
@@ -427,7 +423,10 @@ export class PaypalProvider implements IPaymentProvidable {
       })
 
       return res.data
-    } catch (err) {
+    } catch (err: any) {
+      if (err.response && err.response.data) {
+        throw new Error(err.response.data)
+      }
       console.error(err)
       throw err
     }
@@ -452,7 +451,10 @@ export class PaypalProvider implements IPaymentProvidable {
       })
 
       return res.data
-    } catch (err) {
+    } catch (err: any) {
+      if (err.response && err.response.data) {
+        throw new Error(err.response.data)
+      }
       console.error(err)
       throw err
     }
