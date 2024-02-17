@@ -425,6 +425,7 @@ export class PaypalProvider implements IPaymentProvidable {
       return res.data
     } catch (err: any) {
       if (err.response && err.response.data) {
+        console.error(err.response.data)
         throw new Error(err.response.data)
       }
       console.error(err)
