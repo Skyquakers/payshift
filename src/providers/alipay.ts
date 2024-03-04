@@ -1,9 +1,11 @@
-import AlipaySdk from "alipay-sdk"
+import AlipaySdk, { type AlipaySdkCommonResult } from "alipay-sdk"
 import { readFileSync } from "fs"
 import {
   ChargeCreateParams,
   IPaymentProvidable,
-  PayshiftProviderName } from '../common'
+  PayshiftProviderName,
+  AlipayTransferParams
+} from '../common'
 
 export class AlipayProvider implements IPaymentProvidable {
   public sdk: AlipaySdk
@@ -23,7 +25,7 @@ export class AlipayProvider implements IPaymentProvidable {
     this.notifyUrl = notifyUrl
   }
 
-  public async createDesktopPaymentLink (params: ChargeCreateParams): Promise<string> {
+  public createDesktopPaymentLink (params: ChargeCreateParams): string {
     const data: any = {
       method: 'GET',
       bizContent: {
@@ -43,7 +45,7 @@ export class AlipayProvider implements IPaymentProvidable {
     return result
   }
 
-  public async createMobilePaymentLink (params: ChargeCreateParams): Promise<string> {
+  public createMobilePaymentLink (params: ChargeCreateParams): string {
     const data: any = {
       method: 'GET',
       bizContent: {
@@ -59,6 +61,27 @@ export class AlipayProvider implements IPaymentProvidable {
     }
     const result = this.sdk.pageExec('alipay.trade.wap.pay', data)
 
+    return result
+  }
+
+  public async transfer(params: AlipayTransferParams): Promise<AlipaySdkCommonResult> {
+    const data: any = {
+      bizContent: {
+        out_biz_no: params.outTradeNo,
+        trans_amount: params.amountYuan.toFixed(2),
+        biz_scene: 'DIRECT_TRANSFER',
+        product_code: 'TRANS_ACCOUNT_NO_PWD',
+        order_title: params.title,
+        payee_info: {
+          identity: params.receiver.id,
+          identity_type: params.receiver.type,
+          name: params.receiver.name
+        },
+        remark: params.title
+      }
+    }
+
+    const result = await this.sdk.exec('alipay.fund.trans.uni.transfer', data)
     return result
   }
 }
