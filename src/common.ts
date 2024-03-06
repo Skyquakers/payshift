@@ -56,7 +56,7 @@ export type PayshiftEventName = 'payment_intent.succeeded' | 'payment_intent.cre
 'invoice.created' | 'invoice.finalized' | 'invoice.finalization_failed' | 'invoice.paid'
 
 
-export type PayshiftProviderName = 'alipay' | 'wechat_pay' | 'stripe' | 'paypal' | 'epay' | 'epay_cluster' | 'order2faka'
+export type PayshiftProviderName = 'alipay' | 'wechat_pay' | 'stripe' | 'paypal' | 'epay' | 'epay_cluster' | 'order2faka' | 'ccbill'
 
 
 export type PayshiftChannel = 'stripe_web' | 'alipay_web' | 'wechat_qrcode' |
