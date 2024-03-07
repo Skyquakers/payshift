@@ -1,12 +1,13 @@
 import type { ChargeCreateParams, IPaymentProvidable, PayshiftProviderName } from "../common"
 import { CurrencyCode } from "../currency"
 import { createHash } from "crypto"
+import { convertCurrencyCodeToNumber } from "../utils"
 
 
 export class CCBillProvider implements IPaymentProvidable {
   public name: PayshiftProviderName = 'ccbill'
   private subAccountId: string
-  private salt: string
+  public salt: string
   private flexId: string
 
   constructor (subAccountId: string, salt: string, flexId: string) {
@@ -35,21 +36,7 @@ export class CCBillProvider implements IPaymentProvidable {
     url.searchParams.append('initialPrice', value)
     url.searchParams.append('initialPeriod', '30')
 
-    let currencyNumber = null
-    if (charge.currency === CurrencyCode.JPY) {
-      currencyNumber = 392
-    } else if (charge.currency === CurrencyCode.USD) {
-      currencyNumber = 840
-    } else if (charge.currency === CurrencyCode.EUR) {
-      currencyNumber = 978
-    } else if (charge.currency === CurrencyCode.GBP) {
-      currencyNumber = 826
-    } else if (charge.currency === CurrencyCode.AUD) {
-      currencyNumber = 36
-    } else if (charge.currency === CurrencyCode.CAD) {
-      currencyNumber = 124
-    }
-
+    const currencyNumber = convertCurrencyCodeToNumber(charge.currency)
     if (currencyNumber === null) {
       throw new Error('Unsupported currency')
     }
@@ -62,6 +49,8 @@ export class CCBillProvider implements IPaymentProvidable {
       this.salt
     )
     url.searchParams.append('formDigest', digest)
+    url.searchParams.append('outTradeNo', charge.outTradeNo)
+    url.searchParams.append('title', charge.title)
 
     return url.toString()
   }

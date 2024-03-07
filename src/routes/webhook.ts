@@ -5,6 +5,7 @@ import { onStripeEvent } from "../controllers/webhook-stripe"
 import { onEPayEvent } from "../controllers/webhook-epay"
 import bodyParser from "body-parser"
 import { onFakaEvent } from "../controllers/webhook-faka"
+import { onCCBillEvent } from "../controllers/webhook-ccbill"
 
 
 export const router: Router = Router()
@@ -14,3 +15,4 @@ router.post('/wechat_pay', bodyParser.raw({ type: 'application/json' }), onWecha
 router.post('/stripe', bodyParser.raw({ type: 'application/json' }), onStripeEvent)
 router.get('/epay', onEPayEvent)
 router.post('/faka', bodyParser.raw({ type: 'application/json' }), onFakaEvent)
+router.post('/ccbill', bodyParser.raw({ type: 'application/json' }), onCCBillEvent)
