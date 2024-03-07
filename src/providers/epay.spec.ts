@@ -1,6 +1,6 @@
-import { expect } from "chai"
-import { EPayProvider, Payshift, CurrencyCode } from "../src/index"
-import { pid, key, endpoint } from "../certs/epay/secret"
+import { expect } from "vitest"
+import { EPayProvider, Payshift, CurrencyCode } from "../index"
+import { pid, key, endpoint } from "../../certs/epay/secret"
 
 const provider = new EPayProvider(endpoint, pid, key, 'http://taobao.com')
 const payshift = new Payshift([provider])

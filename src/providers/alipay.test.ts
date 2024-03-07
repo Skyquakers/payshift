@@ -1,6 +1,11 @@
-import { expect } from "chai"
-import { AlipayProvider, CurrencyCode, Payshift } from "../src/index"
-import { privateKeyPath, alipayPublicKeyPath, appId } from "../src/configs/alipay"
+import { expect } from "vitest"
+import { AlipayProvider, CurrencyCode, Payshift } from "../index"
+import path from 'path'
+import { appId } from "../../certs/alipay/secret"
+
+export { appId }
+export const privateKeyPath = path.join(__filename, '../../certs/alipay/private-key.pem')
+export const alipayPublicKeyPath = path.join(__filename, '../../certs/alipay/alipay-public-key.crt')
 
 const provider = new AlipayProvider(appId, privateKeyPath, alipayPublicKeyPath, 'http://www.taobao.com')
 const payshift = new Payshift([provider])

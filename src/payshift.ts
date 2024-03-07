@@ -2,7 +2,7 @@ import express, { Express } from 'express'
 import { router as webhookRouter } from './routes/webhook'
 import { type PayshiftEvent, register, unregister } from './event-handler'
 import mongoose from 'mongoose'
-import { AlipayProvider, EPayProvider, FakaProvider, PaypalProvider, StripeProvider, WechatPayProvider } from './index'
+import { AlipayProvider, CCBillProvider, EPayProvider, FakaProvider, PaypalProvider, StripeProvider, WechatPayProvider } from './index'
 import { ChargeModel } from './models/charge'
 import {
   ChargeCreateParams, ChargeObject, ChargeResponse,
@@ -222,6 +222,14 @@ export class Payshift {
         return {
           charge: chargeObj,
           data: paypalOrder,
+          chargeId,
+        }
+      } else if (chargeObj.channel === 'ccbill_web') {
+        const provider = this.getProvider('ccbill') as CCBillProvider
+        const url = provider.createDesktopPaymentLink(params)
+        return {
+          charge: chargeObj,
+          data: url,
           chargeId,
         }
       }

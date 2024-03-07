@@ -1,13 +1,13 @@
-import { expect } from "chai"
-import { StripeProvider } from "../src/index"
-import { testKey } from "../certs/stripe/secret"
+import { expect } from "vitest"
+import { StripeProvider } from "../index"
+import { testKey } from "../../certs/stripe/secret"
 
 
 const provider = new StripeProvider(testKey)
 
 beforeEach(async function () {
   const accounts = await provider.sdk.accounts.list()
-  const promises = []
+  const promises: Promise<any>[] = []
   for (const account of accounts.data.values()) {
     promises.push(provider.sdk.accounts.del(account.id))
   }

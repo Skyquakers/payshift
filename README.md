@@ -16,6 +16,7 @@ npm install payshift
 - Paypal
 - EPay
 - Multiple EPay instances with round robin algorithm to split your cashflow and risk
+- CCBill
 
 ## Usage
 
@@ -96,7 +97,7 @@ return res.data
 ```typescript
 type PayshiftChannel = 'stripe_web' | 'alipay_web' | 'wechat_qrcode' |
 'wechat_mobile_web' | 'alipay_mobile_web' | 'epay_alipay' | 'epay_wechat_pay' |
-'epay_cluster_alipay' | 'epay_cluster_wechat_pay'
+'epay_cluster_alipay' | 'epay_cluster_wechat_pay' | 'order2faka' | 'paypal' | 'ccbill_web'
 ```
 
 ## Using Provider Alone

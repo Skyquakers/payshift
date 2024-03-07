@@ -1,7 +1,10 @@
-import { expect } from "chai"
-import { CurrencyCode, WechatPayProvider } from "../src/index"
-import { privateKeyPath, publicKeyPath, appId, mcid, apiKey } from "../src/configs/wechat-pay"
+import { expect } from "vitest"
+import { CurrencyCode, WechatPayProvider } from "../index"
+import path from "path"
+import { appId, mcid, apiKey } from "../../certs/wechat-pay/secret"
 
+const privateKeyPath = path.join(__dirname, '../../certs/wechat-pay/apiclient-key.pem')
+const publicKeyPath = path.join(__dirname, '../../certs/wechat-pay/apiclient-cert.pem')
 
 const provider = new WechatPayProvider(appId, mcid, publicKeyPath, privateKeyPath, apiKey, 'http://www.taobao.com')
 

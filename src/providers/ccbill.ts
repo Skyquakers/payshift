@@ -28,7 +28,7 @@ export class CCBillProvider implements IPaymentProvidable {
     return createHash('md5').update(`${initialPrice}${initialPeriod}${currencyCode}${salt}`).digest('hex')
   }
 
-  public async createDesktopPaymentLink (charge: ChargeCreateParams): Promise<string> {
+  public createDesktopPaymentLink (charge: ChargeCreateParams): string {
     const url = new URL(this.getAPIHost())
     url.pathname = `/wap-frontflex/flexforms/${this.flexId}`
     url.searchParams.append('clientSubacc', this.subAccountId)

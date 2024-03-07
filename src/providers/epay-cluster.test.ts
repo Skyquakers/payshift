@@ -1,7 +1,7 @@
-import { EPayProvider, Payshift, CurrencyCode } from "../src/index"
-import { pid, key, endpoint } from "../certs/epay/secret"
-import { EPayClusterProvider } from "../src/providers/epay-cluster"
-import { expect } from 'chai'
+import { EPayProvider, Payshift, CurrencyCode } from "../index"
+import { pid, key, endpoint } from "../../certs/epay/secret"
+import { EPayClusterProvider } from "./epay-cluster"
+import { expect } from 'vitest'
 
 const subProvider = new EPayProvider(endpoint, pid, key, 'http://taobao.com')
 const providers = [subProvider, subProvider, subProvider]
@@ -15,7 +15,7 @@ describe('EPayClusterProvider', function () {
     const body = '234'
     const total_amount = 1
 
-    const promises = []
+    const promises: Promise<any>[] = []
 
     for (let index = 0; index < providers.length + 1; index++) {
       promises.push(payshift.createCharge({

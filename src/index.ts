@@ -7,6 +7,7 @@ export { EPayClusterProvider } from './providers/epay-cluster'
 export { FakaProvider } from './providers/faka'
 export { Payshift } from './payshift'
 export { CurrencyCode } from './currency'
+export { CCBillProvider } from './providers/ccbill'
 
 export type { EPayPaymentParams, PresignedEPayPaymentParams } from './providers/epay'
 export type {
