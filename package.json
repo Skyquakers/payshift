@@ -5,7 +5,7 @@
   "main": "dist/src/index.js",
   "typings": "dist/src/index.d.ts",
   "scripts": {
-    "test": "vitest",
+    "test": "NODE_ENV=development vitest",
     "test-epay": "npm run build && npx mocha dist/test/epay.spec.js --timeout 10000",
     "test-webhook": "npm run build && npx mocha dist/test/webhook.spec.js --timeout 10000",
     "build": "npx tsc",

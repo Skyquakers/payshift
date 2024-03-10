@@ -10,7 +10,7 @@ describe('CCBillProvider', function () {
     const out_trade_no = 'ALIPfdf1211sdfsd12gfddsgs3'
     const subject = 'abc'
     const body = '234'
-    const total_amount = 1
+    const total_amount = 295
 
     const { data: url } = await payshift.createCharge({
       outTradeNo: out_trade_no,
