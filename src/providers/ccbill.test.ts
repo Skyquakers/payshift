@@ -25,4 +25,23 @@ describe('CCBillProvider', function () {
     console.log(url)
     expect(url).to.be.a('string')
   })
+
+  it('subscription link should be a string', async function () {
+    const out_trade_no = 'ALIPfdf1211sdfsd12gfddsgs3'
+    const subject = 'abc'
+    const body = '234'
+    const total_amount = 295
+    const url = provider.createSubscriptionLink({
+      outTradeNo: out_trade_no,
+      title: subject,
+      description: body,
+      amount: total_amount,
+      channel: 'ccbill_web',
+      currency: CurrencyCode.USD,
+      returnUrl: 'http://taobao.com',
+      clientIp: '127.0.0.1',
+    }, 30)
+    console.log(url)
+    expect(url).to.be.a('string')
+  })
 })

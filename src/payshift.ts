@@ -88,6 +88,10 @@ export class Payshift {
           res.locals.epays = (provider as EPayClusterProvider).providers
         } else if (provider.name === 'order2faka') {
           res.locals.faka = provider
+        } else if (provider.name === 'paypal') {
+          res.locals.paypal = provider
+        } else if (provider.name === 'ccbill') {
+          res.locals.ccbill = provider
         }
 
         next()
