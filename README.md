@@ -34,7 +34,11 @@ import { testKey, endpointSecret } from "your stripe config"
 import { apiKey, mcid, publicKeyPath } from "your wechatpay config"
 import { pid, key, endpoint } from "your epay config"
 
-const alipay = new AlipayProvider(appId, privateKeyPath, alipayPublicKeyPath)
+const alipay = new AlipayProvider({ 
+  appId,
+  privateKey: fs.readFileSync(path.join(__filename, privateKeyPath))
+  alipayPublicKey: fs.readFileSync(path.join(__filename, alipayPublicKeyPath))
+})
 const stripe = new StripeProvider(testKey)
 const wechat = new WechatPayProvider(appId, mcid, publicKeyPath, privateKeyPath, apiKey)
 const epay = new EPayProvider(endpoint, pid, key)

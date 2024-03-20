@@ -1,5 +1,4 @@
-import AlipaySdk, { type AlipaySdkCommonResult } from "alipay-sdk"
-import { readFileSync } from "fs"
+import AlipaySdk, { type AlipaySdkCommonResult, AlipaySdkConfig } from "alipay-sdk"
 import {
   ChargeCreateParams,
   IPaymentProvidable,
@@ -12,16 +11,8 @@ export class AlipayProvider implements IPaymentProvidable {
   public name: PayshiftProviderName = 'alipay'
   private notifyUrl?: string
 
-  constructor (appId: string, privateKeyPath: string, alipayPublicKeyPath: string, notifyUrl?: string) {
-    const privateKey = readFileSync(privateKeyPath, 'ascii')
-    const alipayPublicKey = readFileSync(alipayPublicKeyPath, 'ascii')
-
-    this.sdk = new AlipaySdk({
-      signType: 'RSA2',
-      appId,
-      privateKey,
-      alipayPublicKey,
-    })
+  constructor (config: AlipaySdkConfig, notifyUrl?: string) {
+    this.sdk = new AlipaySdk(config)
     this.notifyUrl = notifyUrl
   }
 
