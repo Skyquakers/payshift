@@ -61,14 +61,14 @@ export class CCBillProvider implements IPaymentProvidable {
     return url.toString()
   }
 
-  public createSubscriptionLink (charge: ChargeCreateParams, recurringPeriodInDays: number): string {
+  public createSubscriptionLink (charge: ChargeCreateParams, initialPeriodInDays: number, recurringPeriodInDays: number): string {
     const url = new URL(this.getAPIHost())
     url.pathname = `/wap-frontflex/flexforms/${this.flexId}`
     url.searchParams.append('clientSubacc', this.subAccountId)
     const value = charge.currency === CurrencyCode.JPY ? `${String(charge.amount)}.00` : (charge.amount / 100).toFixed(2)
     url.searchParams.append('initialPrice', value)
     url.searchParams.append('recurringPrice', value)
-    url.searchParams.append('initialPeriod', String(recurringPeriodInDays))
+    url.searchParams.append('initialPeriod', String(initialPeriodInDays))
     url.searchParams.append('recurringPeriod', String(recurringPeriodInDays))
     url.searchParams.append('numRebills', '99')
 
