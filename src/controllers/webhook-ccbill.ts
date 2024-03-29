@@ -51,9 +51,7 @@ export const onCCBillEvent = async function (req: Request, res: Response, next: 
         currency,
         provider: 'ccbill',
         name: 'charge.succeeded',
-      }, {
-        subscriptionId
-      })
+      }, req.body)
     } else if (eventType === 'RenewalSuccess') {
       console.log(req.body)
       const { billedAmount } = req.body
@@ -64,9 +62,7 @@ export const onCCBillEvent = async function (req: Request, res: Response, next: 
         tradeNo: transactionId,
         amount: currency === CurrencyCode.JPY ? Math.round(Number(billedAmount)) : Math.round(Number(billedAmount) * 100),
         currency,
-      }, {
-        subscriptionId
-      })
+      }, req.body)
     }
     return res.status(200).send('OK')
   } catch (err: any) {
