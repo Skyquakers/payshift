@@ -1,13 +1,11 @@
 {
   "name": "payshift",
-  "version": "1.0.54",
+  "version": "1.0.55",
   "description": "unified payment api for multiple payment processors",
   "main": "dist/src/index.js",
   "typings": "dist/src/index.d.ts",
   "scripts": {
     "test": "NODE_ENV=development vitest",
-    "test-epay": "npm run build && npx mocha dist/test/epay.spec.js --timeout 10000",
-    "test-webhook": "npm run build && npx mocha dist/test/webhook.spec.js --timeout 10000",
     "build": "npx tsc",
     "dev": "npx ts-node src/dev.ts",
     "start": "node dist/index.js",
