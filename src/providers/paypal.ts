@@ -77,7 +77,7 @@ export class PaypalProvider implements IPaymentProvidable {
             currency,
           },
           sender_item_id: txnId,
-          recipient_wallet: 'WALLET',
+          recipient_wallet: 'PAYPAL',
           receiver,
         }]
       }
