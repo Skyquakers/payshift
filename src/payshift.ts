@@ -48,22 +48,30 @@ export class Payshift {
     this.providers.push(provider)
   }
 
-  public async usedb(connectionString: string = 'mongodb://mongodb:27017/payshift', options?: mongoose.ConnectOptions) {
-    try {
+  public async usedb(connectionString: string = 'mongodb://mongodb:27017/payshift', options?: mongoose.ConnectOptions): Promise<void> {
+    return new Promise((resolve, reject) => {
       console.log('[payshift]: starting connecting to mongodb')
-      await mongoose.connect(connectionString, options)
-      this.dbUsed = true
-      console.log('[payshift]: mongodb connected')
+      const connection = mongoose.createConnection(connectionString, options)
 
-      if (this.webServerStarted) {
-        this.webserver.use(function (req, res, next) {
-          res.locals.dbUsed = true
-          next()
-        })
-      }
-    } catch (err) {
-      console.error(err)
-    }
+      connection.on('error', (err) => {
+        console.error(err)
+        reject(err)
+      })
+
+      connection.once('open', () => {
+        console.log('[payshift]: mongodb connected')
+        this.dbUsed = true
+
+        if (this.webServerStarted) {
+          this.webserver.use(function (req, res, next) {
+            res.locals.dbUsed = true
+            next()
+          })
+        }
+
+        resolve()
+      })
+    })
   }
 
   public async startWebServer (hostname: string, localPort: number) {
