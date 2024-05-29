@@ -20,6 +20,8 @@ export const onCCBillEvent = async function (req: Request, res: Response, next: 
       throw new Error('ccbill provider not configured')
     }
 
+    console.log(req.body)
+
     const eventType = req.query.eventType as CCBillEventType
     const { transactionId, billedCurrencyCode, subscriptionId } = req.body
     const currency = converNumberToCurrencyCode(Number(billedCurrencyCode))
@@ -53,7 +55,6 @@ export const onCCBillEvent = async function (req: Request, res: Response, next: 
         name: 'charge.succeeded',
       }, req.body)
     } else if (eventType === 'RenewalSuccess') {
-      console.log(req.body)
       const { billedAmount } = req.body
 
       await trigger('invoice.paid', {

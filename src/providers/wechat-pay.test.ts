@@ -1,4 +1,4 @@
-import { expect } from "vitest"
+import { expect, describe, it } from "vitest"
 import { CurrencyCode, WechatPayProvider } from "../index"
 import path from "path"
 import { appId, mcid, apiKey } from "../../certs/wechat-pay/secret"
