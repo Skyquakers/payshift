@@ -40,7 +40,7 @@ describe('CCBillProvider', function () {
       currency: CurrencyCode.USD,
       returnUrl: 'http://taobao.com',
       clientIp: '127.0.0.1',
-    }, 30)
+    }, 30, 30)
     console.log(url)
     expect(url).to.be.a('string')
   })
