@@ -1,4 +1,4 @@
-import AlipaySdk, { type AlipaySdkCommonResult, AlipaySdkConfig } from "alipay-sdk"
+import { type AlipaySdkCommonResult, AlipaySdkConfig, AlipaySdk } from "alipay-sdk"
 import {
   ChargeCreateParams,
   IPaymentProvidable,

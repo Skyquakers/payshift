@@ -1,6 +1,6 @@
 {
   "name": "payshift",
-  "version": "1.0.57",
+  "version": "1.0.58",
   "description": "unified payment api for multiple payment processors",
   "main": "dist/src/index.js",
   "typings": "dist/src/index.d.ts",
@@ -8,13 +8,12 @@
     "test": "NODE_ENV=development vitest",
     "build": "npx tsc",
     "dev": "npx ts-node src/dev.ts",
-    "start": "node dist/index.js",
-    "prepublish": "npx tsc"
+    "start": "node dist/index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "alipay-sdk": "^3.6.1",
+    "alipay-sdk": "^4.1.0",
     "axios": "^1.5.1",
     "body-parser": "^1.20.2",
     "express": "^4.18.2",

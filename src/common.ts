@@ -1,6 +1,6 @@
 import Stripe from "stripe"
 import { CurrencyCode } from "./currency"
-import AlipaySdk from "alipay-sdk"
+import { AlipaySdk } from "alipay-sdk"
 import WxPay from 'wechatpay-node-v3'
 
 export type ChargeCreateParams = {

@@ -1,4 +1,4 @@
-import AlipaySdk from "alipay-sdk"
+import { AlipaySdk } from "alipay-sdk"
 import { NextFunction, Request, Response } from "express"
 import { trigger } from "../event-handler"
 import { EventModel } from "../models/event"
