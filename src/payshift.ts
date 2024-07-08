@@ -218,9 +218,10 @@ export class Payshift {
           chargeId,
         }
       } else if (chargeObj.channel === 'order2faka') {
+        const channels = params.extras?.subProcessors ?? []
         const provider = this.getProvider('order2faka') as FakaProvider
         const result = this.hostname
-          ? await provider.createPayment(params, `${this.hostname}/webhooks/faka`)
+          ? await provider.createPayment(params, channels, `${this.hostname}/webhooks/faka`)
           : await provider.createPayment(params)
         return {
           charge: chargeObj,

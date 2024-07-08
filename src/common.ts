@@ -12,8 +12,13 @@ export type ChargeCreateParams = {
   channel: PayshiftChannel,
   description?: string,
   clientIp: string,
-  userAgent?: string
+  userAgent?: string,
+  extras?: {
+    subProcessors?: FakaSubProcessor[],
+  }
 }
+
+export type FakaSubProcessor = 'alipay' | 'wechat_pay' | 'stripe_web' | 'paypal'
 
 export type ChargeObject = {
   title: string,

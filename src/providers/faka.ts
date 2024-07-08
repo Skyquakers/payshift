@@ -1,4 +1,4 @@
-import { ChargeCreateParams, IPaymentProvidable, PayshiftProviderName } from "../common"
+import { ChargeCreateParams, FakaSubProcessor, IPaymentProvidable, PayshiftProviderName } from "../common"
 import axios from "axios"
 import { createHash } from "crypto"
 
@@ -20,7 +20,7 @@ export class FakaProvider implements IPaymentProvidable {
     this.merchantId = merchantId
   }
 
-  async createPayment (params: ChargeCreateParams, notifyUrl?: string): Promise<FakaPaymentResult> {
+  async createPayment (params: ChargeCreateParams, channels: FakaSubProcessor[] = [], notifyUrl?: string): Promise<FakaPaymentResult> {
     const url = new URL('/api/orders', this.endpoint).toString()
     const res = await axios.post(url, {
       title: params.title,
@@ -34,6 +34,7 @@ export class FakaProvider implements IPaymentProvidable {
       merchantKeyHash: createHash('md5').update(`${params.outTradeNo}${this.key}`).digest('hex'),
       notifyUrl,
       currency: params.currency,
+      channels,
     })
 
     return {
