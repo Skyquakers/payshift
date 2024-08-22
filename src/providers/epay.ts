@@ -116,7 +116,10 @@ export class EPayProvider implements IPaymentProvidable {
       sign: sign(data, this.key)
     }
 
-    const url = new URL('/mapi.php', this.endpoint)
+    const url = new URL(this.endpoint)
+    if (url.pathname === '/') {
+      url.pathname = '/mapi.php'
+    }
 
     const unullableData: Record<string, string> = Object.entries(finalData).reduce((acc, [key, value]) => {
       if (value !== undefined) {
