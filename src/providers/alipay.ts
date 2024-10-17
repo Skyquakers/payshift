@@ -36,7 +36,7 @@ export class AlipayProvider implements IPaymentProvidable {
     return result
   }
 
-  public createMobilePaymentLink (params: ChargeCreateParams): string {
+  public async createMobilePaymentLink (params: ChargeCreateParams): Promise<string> {
     const data: any = {
       method: 'GET',
       bizContent: {

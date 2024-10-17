@@ -42,6 +42,10 @@ export interface IPaymentProvidable {
   name: PayshiftProviderName;
   sdk?: AlipaySdk | WxPay | Stripe;
   webhookEndpoint?: string,
+  createDesktopPaymentLink?: (charge: ChargeCreateParams) => string
+  createSubscriptionLink?: (charge: ChargeCreateParams, initialPeriodInDays: number, recurringPeriodInDays: number) => string
+  createPaymentQrcodeUrl?: (charge: ChargeCreateParams, notifyUrl?: string) => Promise<string>
+  createMobilePaymentLink?: (charge: ChargeCreateParams, notifyUrl?: string) => Promise<string>
 }
 
 
