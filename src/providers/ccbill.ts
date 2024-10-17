@@ -24,13 +24,19 @@ export class CCBillProvider implements IPaymentProvidable {
     }
   }
 
-  public generateDigest (initialPrice: string, initialPeriod: string, currencyCode: number, salt: string, recurringPrice?: string, recurringPeriod?: string): string {
+  public generateFlexformDigest (initialPrice: string, initialPeriod: string, currencyCode: number, recurringPrice?: string, recurringPeriod?: string): string {
     if (!recurringPrice || !recurringPeriod) {
-      const passpharse = `${initialPrice}${initialPeriod}${currencyCode}${salt}`
+      const passpharse = `${initialPrice}${initialPeriod}${currencyCode}${this.salt}`
       return createHash('md5').update(passpharse).digest('hex')      
     }
 
-    const passpharse = `${initialPrice}${initialPeriod}${recurringPrice}${recurringPeriod}${'99'}${currencyCode}${salt}`
+    const passpharse = `${initialPrice}${initialPeriod}${recurringPrice}${recurringPeriod}${'99'}${currencyCode}${this.salt}`
+    return createHash('md5').update(passpharse).digest('hex')
+  }
+
+  public generateDynamicPricingValidationDigest (approved: boolean, subscriptionOrDenialId: string): string {
+    const middle = approved ? 1 : 0
+    const passpharse = `${subscriptionOrDenialId}${middle}${this.salt}`
     return createHash('md5').update(passpharse).digest('hex')
   }
 
@@ -48,11 +54,10 @@ export class CCBillProvider implements IPaymentProvidable {
     }
 
     url.searchParams.append('currencyCode', String(currencyNumber))
-    const digest = this.generateDigest(
+    const digest = this.generateFlexformDigest(
       url.searchParams.get('initialPrice') as string,
       url.searchParams.get('initialPeriod') as string,
       currencyNumber,
-      this.salt
     )
     url.searchParams.append('formDigest', digest)
     url.searchParams.append('outTradeNo', charge.outTradeNo)
@@ -78,11 +83,10 @@ export class CCBillProvider implements IPaymentProvidable {
     }
 
     url.searchParams.append('currencyCode', String(currencyNumber))
-    const digest = this.generateDigest(
+    const digest = this.generateFlexformDigest(
       url.searchParams.get('initialPrice') as string,
       url.searchParams.get('initialPeriod') as string,
       currencyNumber,
-      this.salt,
       url.searchParams.get('recurringPrice') as string,
       url.searchParams.get('recurringPeriod') as string,
     )

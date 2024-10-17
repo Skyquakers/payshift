@@ -3,8 +3,10 @@ import { trigger } from "../event-handler"
 import { converNumberToCurrencyCode } from "../utils"
 import { CurrencyCode } from "../currency"
 
-
-type CCBillEventType = 'NewSaleSuccess' | 'RenewalSuccess'
+enum CCBillEventType {
+  NewSaleSuccess = 'NewSaleSuccess',
+  RenewalSuccess = 'RenewalSuccess',
+}
 
 export const onCCBillEvent = async function (req: Request, res: Response, next: NextFunction) {
   console.log('[payshift]: onCCBillEvent')
@@ -26,20 +28,14 @@ export const onCCBillEvent = async function (req: Request, res: Response, next: 
     const { transactionId, billedCurrencyCode, subscriptionId } = req.body
     const currency = converNumberToCurrencyCode(Number(billedCurrencyCode))
 
-    if (eventType === 'NewSaleSuccess') {
+    if (eventType === CCBillEventType.NewSaleSuccess) {
       const {
         transactionId, dynamicPricingValidationDigest,
         billedInitialPrice,
-        initialPeriod, subscriptionInitialPrice, subscriptionCurrencyCode,
-        recurringPeriod, subscriptionRecurringPrice
       } = req.body
-      const hash = ccbill.generateDigest(
-        subscriptionInitialPrice,
-        initialPeriod,
-        subscriptionCurrencyCode,
-        ccbill.salt,
-        subscriptionRecurringPrice,
-        recurringPeriod,
+      const hash = ccbill.generateDynamicPricingValidationDigest(
+        true,
+        subscriptionId
       )
   
       if (hash !== dynamicPricingValidationDigest) {
@@ -54,7 +50,7 @@ export const onCCBillEvent = async function (req: Request, res: Response, next: 
         provider: 'ccbill',
         name: 'charge.succeeded',
       }, req.body)
-    } else if (eventType === 'RenewalSuccess') {
+    } else if (eventType === CCBillEventType.RenewalSuccess) {
       const { billedAmount } = req.body
 
       await trigger('invoice.paid', {
