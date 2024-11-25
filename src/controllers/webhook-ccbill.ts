@@ -33,14 +33,19 @@ export const onCCBillEvent = async function (req: Request, res: Response, next: 
         transactionId, dynamicPricingValidationDigest,
         billedInitialPrice,
       } = req.body
-      const hash = ccbill.generateDynamicPricingValidationDigest(
-        true,
-        subscriptionId
-      )
+      // While our backend department is working on this
+      // you will always receive the formDigest value instead
+      // so please update the calculation of this value on your side
+      // to avoid issues with receiving webhooks
+      // -- ccbill
+      // const hash = ccbill.generateDynamicPricingValidationDigest(
+      //   true,
+      //   subscriptionId
+      // )
   
-      if (hash !== dynamicPricingValidationDigest) {
-        throw new Error(`dynamicPricingValidationDigest mismatched, expect ${hash}, got ${dynamicPricingValidationDigest}`)
-      }
+      // if (hash !== dynamicPricingValidationDigest) {
+      //   throw new Error(`dynamicPricingValidationDigest mismatched, expect ${hash}, got ${dynamicPricingValidationDigest}`)
+      // }
   
       await trigger('charge.succeeded', {
         amount: currency === CurrencyCode.JPY ? Math.round(Number(billedInitialPrice)) : Math.round(Number(billedInitialPrice) * 100),
