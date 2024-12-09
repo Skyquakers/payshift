@@ -18,6 +18,8 @@ export const onAlipayEvent = async function (req: Request, res: Response, next: 
     try {
       const ok = sdk.checkNotifySign(req.body)
       if (!ok) {
+        console.log('failed data:')
+        console.log(req.body)
         throw new Error('notify post data verify failed')
       }
     } catch (err) {
