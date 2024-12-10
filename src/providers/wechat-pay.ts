@@ -46,6 +46,8 @@ export class WechatPayProvider implements IPaymentProvidable {
       return result.h5_url
     }
 
+    console.error(result)
+
     throw new Error(`wechat pay launch fails, code ${result.status} ${result.code}, ${result.message}`)
   }
 
@@ -65,6 +67,8 @@ export class WechatPayProvider implements IPaymentProvidable {
     if (result.status === 200) {
       return result.code_url
     }
+
+    console.error(result)
 
     throw new Error(`wechat pay launch fails, code ${result.status} ${result.code}, ${result.message}`)
   }

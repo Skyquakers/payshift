@@ -10,7 +10,7 @@ import { onCCBillEvent } from "../controllers/webhook-ccbill"
 
 export const router: Router = Router()
 
-router.post('/alipay', bodyParser.raw({ type: 'application/json' }), onAlipayEvent)
+router.post('/alipay', bodyParser.urlencoded({ extended: false }), onAlipayEvent)
 router.post('/wechat_pay', bodyParser.raw({ type: 'application/json' }), onWechatPayEvent)
 router.post('/stripe', bodyParser.raw({ type: 'application/json' }), onStripeEvent)
 router.get('/epay', onEPayEvent)
