@@ -66,8 +66,9 @@ export class WechatPayProvider implements IPaymentProvidable {
       },
     };
     const result = await this.sdk.transactions_native(params)
+
     if (result.status === 200) {
-      return result.code_url
+      return result.data.code_url
     }
 
     if (result.error) {
