@@ -13,18 +13,29 @@ type AlipayNotifyStatus = 'TRADE_SUCCESS' | 'TRADE_FINISHED' | 'WAIT_BUYER_PAY' 
 // https://opendocs.alipay.com/support/01raw4
 export const onAlipayEvent = async function (req: Request, res: Response, next: NextFunction) {
   console.log('[payshift]: onAlipayEvent')
+
   try {
     const sdk = res.locals.alipay?.sdk as AlipaySdk
+    if (!sdk) {
+      console.error('[payshift]: Alipay SDK not found in res.locals')
+      return res.status(500).send('fail')
+    }
+
+    // Check if body is empty
+    if (!req.body || Object.keys(req.body).length === 0) {
+      console.error('[payshift]: Empty request body received')
+      return res.status(400).send('fail')
+    }
+
     try {
       const ok = sdk.checkNotifySign(req.body)
       if (!ok) {
-        console.log('failed data:')
-        console.log(req.body)
+        console.log('[payshift]: failed verification data:', req.body)
         throw new Error('notify post data verify failed')
       }
     } catch (err) {
-      console.error(err)
-      return res.send('fail')
+      console.error('[payshift]: signature verification failed:', err)
+      return res.status(400).send('fail')
     }
 
     let settled = false
