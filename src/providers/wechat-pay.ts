@@ -46,9 +46,11 @@ export class WechatPayProvider implements IPaymentProvidable {
       return result.h5_url
     }
 
-    console.error(result)
-
-    throw new Error(`wechat pay launch fails, code ${result.status} ${result.code}, ${result.message}`)
+    if (result.error) {
+      throw new Error(`wechat pay launch fails, code ${result.error.status} ${result.error.code}, ${result.error.message}`)      
+    } else {
+      throw new Error(`wechat pay launch fails, ${JSON.stringify(result)}`)
+    }
   }
 
   public async createPaymentQrcodeUrl (charge: ChargeCreateParams, notifyUrl?: string) {
@@ -64,12 +66,15 @@ export class WechatPayProvider implements IPaymentProvidable {
       },
     };
     const result = await this.sdk.transactions_native(params)
+
     if (result.status === 200) {
-      return result.code_url
+      return result.data.code_url
     }
 
-    console.error(result)
-
-    throw new Error(`wechat pay launch fails, code ${result.status} ${result.code}, ${result.message}`)
+    if (result.error) {
+      throw new Error(`wechat pay launch fails, code ${result.error.status} ${result.error.code}, ${result.error.message}`)      
+    } else {
+      throw new Error(`wechat pay launch fails, ${JSON.stringify(result)}`)
+    }
   }
 }
