@@ -9,6 +9,8 @@ import { WechatPayProvider } from '../providers/wechat-pay'
 // https://pay.weixin.qq.com/wiki/doc/api_external/ch/apis/chapter3_3_11.shtml
 export const onWechatPayEvent = async function (req: Request, res: Response, next: NextFunction) {
   console.log('[payshift]: onWechatPayEvent')
+  console.log('req.body', req.body)
+  console.log('req.query', req.query)
   try {
     const {
       event_type,
@@ -18,6 +20,7 @@ export const onWechatPayEvent = async function (req: Request, res: Response, nex
       summary,
     } = req.body ?? req.query
     if (!resource) {
+      console.error('[payshift]: no resource found in wechatpay event')
       return res.status(401).json({
         code: 'FAIL',
         message: '格式错误'
@@ -32,6 +35,7 @@ export const onWechatPayEvent = async function (req: Request, res: Response, nex
       nonce,
     } = resource
     const result = sdk.decipher_gcm(ciphertext, associated_data, nonce, provider.apiKey)
+    console.log('decipher_gcm result', result)
     const {
       trade_state,
       out_trade_no,

@@ -1,6 +1,6 @@
 {
   "name": "payshift",
-  "version": "1.0.65",
+  "version": "1.0.66",
   "description": "unified payment api for multiple payment processors",
   "main": "dist/src/index.js",
   "typings": "dist/src/index.d.ts",
