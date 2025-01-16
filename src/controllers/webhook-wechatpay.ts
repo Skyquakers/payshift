@@ -10,9 +10,20 @@ import { WechatPayProvider } from '../providers/wechat-pay'
 export const onWechatPayEvent = async function (req: Request, res: Response, next: NextFunction) {
   console.log('[payshift]: onWechatPayEvent')
   try {
-    // Parse the raw buffer to JSON
-    const rawBody = req.body.toString('utf8')
-    const body = JSON.parse(rawBody)
+    // Handle both Buffer and parsed object cases
+    let body: any
+    if (Buffer.isBuffer(req.body)) {
+      const rawBody = req.body.toString('utf8')
+      body = JSON.parse(rawBody)
+    } else if (typeof req.body === 'object') {
+      body = req.body
+    } else {
+      console.error('[payshift]: Invalid request body format', req.body)
+      return res.status(400).json({
+        code: 'FAIL',
+        message: 'Invalid request body format'
+      })
+    }
 
     const {
       event_type,
