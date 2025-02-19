@@ -4,12 +4,16 @@ import {
   PayshiftProviderName,
 } from '../common'
 
+interface NgeniusCreateOrderAmount {
+  currencyCode: string
+  value: number
+}
+
+type NgeniusCreateOrderAction = 'SALE' | 'AUTH' | 'PURCHASE'
+
 interface NgeniusCreateOrderParams {
-  action: 'SALE' | 'AUTH' | 'PURCHASE'
-  amount: {
-    currencyCode: string
-    value: number
-  }
+  action: NgeniusCreateOrderAction
+  amount: NgeniusCreateOrderAmount
   emailAddress?: string
   billingAddress?: {
     firstName: string
@@ -17,7 +21,15 @@ interface NgeniusCreateOrderParams {
   }
 }
 
-interface NgeniusOrderResponse {
+type NgeniusPaymentState =
+  | 'STARTED'
+  | 'AUTHORISED'
+  | 'PURCHASED'
+  | 'CAPTURED'
+  | 'AWAIT_3DS'
+  | 'FAILED'
+
+interface NgeniusOrder {
   _id: string
   _links: {
     'cnp:payment-link'?: {
@@ -61,7 +73,7 @@ interface NgeniusOrderResponse {
   formattedOrderSummary?: Record<string, unknown>
   _embedded?: {
     payment?: Array<{
-      _id: string
+      _id: string // urn:payment:payment-reference, eg: urn:payment:2fff837f-9a39-4a02-8435-9aaa7cb6b558
       _links: {
         'payment:apple_pay'?: { href: string }
         self: { href: string }
@@ -74,7 +86,7 @@ interface NgeniusOrderResponse {
           templated: boolean
         }>
       }
-      state: string
+      state: NgeniusPaymentState
       amount: {
         currencyCode: string
         value: number
@@ -93,7 +105,7 @@ interface NgeniusSubmitCardParams {
   cardHolderName: string
 }
 
-interface NgeniusSubmitCardResponse {
+interface NgeniusPayment {
   _id: string
   _links: {
     self: { href: string }
@@ -102,6 +114,9 @@ interface NgeniusSubmitCardResponse {
       href: string
       templated: boolean
     }>
+    'cnp:3ds2-challenge-response'?: { href: string }
+    'cnp:3ds2-authentication'?: { href: string }
+    'cnp:3ds'?: { href: string }
   }
   paymentMethod: {
     expiry: string
@@ -110,9 +125,10 @@ interface NgeniusSubmitCardResponse {
     pan: string
     cvv: string
   }
+  reference: string
   outletId: string
   orderReference: string
-  state: string
+  state: NgeniusPaymentState
   amount: {
     currencyCode: string
     value: number
@@ -121,6 +137,62 @@ interface NgeniusSubmitCardResponse {
   authResponse?: {
     authorizationCode: string
     success: boolean
+  }
+}
+
+interface NgeniusCapture {
+  reference: string
+  paymentMethod: Record<string, unknown>
+  savedCard?: {
+    maskedPan: string
+    expiry: string
+    cardholderName: string
+    scheme: string
+    cardToken: string
+  }
+  state: string
+  amount: {
+    currencyCode: string
+    value: number
+  }
+  updateDateTime: number
+  outletId: string
+  orderReference: string
+  merchantOrderReference: string
+  captureData?: Array<{
+    amount: {
+      currencyCode: string
+      value: number
+    }
+  }>
+  refundData?: Array<{
+    amount: {
+      currencyCode: string
+      value: number
+    }
+    createdTime: number
+    state: string
+    voidable: boolean
+  }>
+  cancellable?: boolean
+  availablePaymentMethods?: {
+    [key: string]: string[]
+  }
+  displaySavedCard?: boolean
+  acceptResultLink?: boolean
+  is3dsRequired?: boolean
+  capturable?: boolean
+  authResponse?: {
+    authorizationCode: string
+    success: boolean
+    resultCode: string
+    resultMessage: string
+  }
+  '3ds'?: {
+    status: string
+    acsUrl: string
+    acsPaReq: string
+    acsMd: string
   }
 }
 
@@ -171,7 +243,7 @@ export class NgeniusProvider implements IPaymentProvidable {
     outletId: string,
     params: NgeniusCreateOrderParams,
     testOnly = false
-  ): Promise<NgeniusOrderResponse> {
+  ): Promise<NgeniusOrder> {
     try {
       const accessToken = await this.getAccessToken(testOnly)
       const url = new URL(
@@ -206,7 +278,7 @@ export class NgeniusProvider implements IPaymentProvidable {
     paymentReference: string,
     params: NgeniusSubmitCardParams,
     testOnly = false
-  ): Promise<NgeniusSubmitCardResponse> {
+  ): Promise<NgeniusPayment> {
     try {
       const accessToken = await this.getAccessToken(testOnly)
       const url = new URL(
@@ -235,12 +307,118 @@ export class NgeniusProvider implements IPaymentProvidable {
     }
   }
 
-  async createPayment(
+  async getOrder(
+    outletId: string,
+    orderReference: string,
+    testOnly = false
+  ): Promise<NgeniusOrder> {
+    try {
+      const accessToken = await this.getAccessToken(testOnly)
+      const url = new URL(
+        `/transactions/outlets/${outletId}/orders/${orderReference}`,
+        this.getAPIHost(testOnly)
+      )
+
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        throw data
+      }
+
+      const data = await res.json()
+      return data
+    } catch (err) {
+      console.error(err)
+      throw err
+    }
+  }
+
+  async capturePayment(
+    outletId: string,
+    orderReference: string,
+    paymentReference: string,
+    params: NgeniusCreateOrderAmount,
+    testOnly = false
+  ): Promise<NgeniusCapture> {
+    try {
+      const accessToken = await this.getAccessToken(testOnly)
+      const url = new URL(
+        `/transactions/outlets/${outletId}/orders/${orderReference}/payments/${paymentReference}/captures`,
+        this.getAPIHost(testOnly)
+      )
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/vnd.ni-payment.v2+json',
+          Accept: 'application/vnd.ni-payment.v2+json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify(params),
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        throw data
+      }
+
+      const data = await res.json()
+      return data
+    } catch (err) {
+      console.error(err)
+      throw err
+    }
+  }
+
+  async refundCapture(
+    outletId: string,
+    orderReference: string,
+    paymentReference: string,
+    captureReference: string,
+    params: NgeniusCreateOrderAmount,
+    testOnly = false
+  ) {
+    try {
+      const accessToken = await this.getAccessToken(testOnly)
+      const url = new URL(
+        `/transactions/outlets/${outletId}/orders/${orderReference}/payments/${paymentReference}/captures/${captureReference}/refund`,
+        this.getAPIHost(testOnly)
+      )
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/vnd.ni-payment.v2+json',
+          Accept: 'application/vnd.ni-payment.v2+json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify(params),
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        throw data
+      }
+
+      const data = await res.json()
+      return data
+    } catch (err) {
+      console.error(err)
+      throw err
+    }
+  }
+
+  async createHostedSessionPayment(
     params: ChargeCreateParams,
     sessionId: string,
     outletId: string,
+    action: NgeniusCreateOrderAction,
     testOnly = false
-  ): Promise<{ data: any }> {
+  ) {
     try {
       const accessToken = await this.getAccessToken(testOnly)
       const url = new URL(
@@ -255,7 +433,7 @@ export class NgeniusProvider implements IPaymentProvidable {
           Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
-          action: 'SALE',
+          action,
           amount: {
             value: params.amount,
             currency: params.currency,
@@ -265,15 +443,11 @@ export class NgeniusProvider implements IPaymentProvidable {
 
       if (!res.ok) {
         const data = await res.json()
-        console.error(data)
-        throw new Error('Failed to complete payment')
+        throw data
       }
 
       const data = await res.json()
-
-      return {
-        data,
-      }
+      return data
     } catch (err) {
       console.error(err)
       throw err
