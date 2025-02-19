@@ -8,16 +8,16 @@ export class NgeniusProvider implements IPaymentProvidable {
     this.apiKey = apiKey
   }
 
-  getAPIHost (): string {
-    if (process.env.NODE_ENV !== 'production') {
+  getAPIHost (testOnly = false): string {
+    if (process.env.NODE_ENV !== 'production' || testOnly) {
       return 'https://api-gateway.sandbox.ngenius-payments.com'
     }
     return 'https://api-gateway.ngenius-payments.com'
   }
 
-  async getAccessToken (): Promise<string> {
+  async getAccessToken (testOnly = false): Promise<string> {
     try {
-      const url = new URL('/identity/auth/access-token', this.getAPIHost())
+      const url = new URL('/identity/auth/access-token', this.getAPIHost(testOnly))
       const res = await fetch(url, {
         method: 'POST',
         headers: {
@@ -43,10 +43,10 @@ export class NgeniusProvider implements IPaymentProvidable {
     }
   }
 
-  async createPayment (params: ChargeCreateParams, sessionId: string, outletId: string): Promise<{ data: any }> {
+  async createPayment (params: ChargeCreateParams, sessionId: string, outletId: string, testOnly = false): Promise<{ data: any }> {
     try {
-      const accessToken = await this.getAccessToken()
-      const url = new URL(`/transactions/outlets/${outletId}/payment/hosted-session/${sessionId}`, this.getAPIHost())
+      const accessToken = await this.getAccessToken(testOnly)
+      const url = new URL(`/transactions/outlets/${outletId}/payment/hosted-session/${sessionId}`, this.getAPIHost(testOnly))
       const res = await fetch(url, {
         method: 'POST',
         headers: {
