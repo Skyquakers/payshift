@@ -8,6 +8,7 @@ export { FakaProvider } from './providers/faka'
 export { Payshift } from './payshift'
 export { CurrencyCode } from './currency'
 export { CCBillProvider } from './providers/ccbill'
+export { NgeniusProvider } from './providers/ngenius'
 
 export type { EPayPaymentParams, PresignedEPayPaymentParams } from './providers/epay'
 export type {
