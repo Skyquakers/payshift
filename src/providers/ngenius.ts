@@ -102,7 +102,7 @@ interface NgeniusSubmitCardParams {
   pan: string
   expiry: string
   cvv: string
-  cardHolderName: string
+  cardholderName: string
 }
 
 interface NgeniusPayment {
