@@ -29,7 +29,7 @@ type NgeniusPaymentState =
   | 'AWAIT_3DS'
   | 'FAILED'
 
-interface NgeniusOrder {
+export interface NgeniusOrder {
   _id: string
   _links: {
     'cnp:payment-link'?: {
@@ -105,7 +105,7 @@ interface NgeniusSubmitCardParams {
   cardholderName: string
 }
 
-interface NgeniusPayment {
+export interface NgeniusPayment {
   _id: string
   _links: {
     self: { href: string }
@@ -140,7 +140,7 @@ interface NgeniusPayment {
   }
 }
 
-interface NgeniusCapture {
+export interface NgeniusCapture {
   reference: string
   paymentMethod: Record<string, unknown>
   savedCard?: {

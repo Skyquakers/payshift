@@ -1,19 +1,30 @@
+export { CurrencyCode } from './currency'
+export { Payshift } from './payshift'
 export { AlipayProvider } from './providers/alipay'
-export { WechatPayProvider } from './providers/wechat-pay'
-export { StripeProvider } from './providers/stripe'
-export { PaypalProvider } from './providers/paypal'
+export { CCBillProvider } from './providers/ccbill'
 export { EPayProvider } from './providers/epay'
 export { EPayClusterProvider } from './providers/epay-cluster'
 export { FakaProvider } from './providers/faka'
-export { Payshift } from './payshift'
-export { CurrencyCode } from './currency'
-export { CCBillProvider } from './providers/ccbill'
 export { NgeniusProvider } from './providers/ngenius'
+export { PaypalProvider } from './providers/paypal'
+export { StripeProvider } from './providers/stripe'
+export { WechatPayProvider } from './providers/wechat-pay'
 
-export type { EPayPaymentParams, PresignedEPayPaymentParams } from './providers/epay'
+export type { AlipaySdkCommonResult } from 'alipay-sdk'
 export type {
-  ChargeCreateParams, PayshiftChannel, IPaymentProvidable,
-  PaypalOrder, AlipayTransferParams
+  AlipayTransferParams,
+  ChargeCreateParams,
+  IPaymentProvidable,
+  PaypalOrder,
+  PayshiftChannel,
 } from './common'
 export type { PayshiftEvent } from './event-handler'
-export type { AlipaySdkCommonResult } from 'alipay-sdk'
+export type {
+  EPayPaymentParams,
+  PresignedEPayPaymentParams,
+} from './providers/epay'
+export type {
+  NgeniusCapture,
+  NgeniusOrder,
+  NgeniusPayment,
+} from './providers/ngenius'
