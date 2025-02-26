@@ -24,6 +24,7 @@ export type {
   PresignedEPayPaymentParams,
 } from './providers/epay'
 export type {
+  Ngenius3DS2ChallengeResponse,
   Ngenius3DS2Response,
   NgeniusCapture,
   NgeniusClientInfo,

@@ -230,6 +230,15 @@ export interface Ngenius3DS2Response {
   }
 }
 
+export interface Ngenius3DS2ChallengeResponse {
+  transStatus: string
+  threeDSServerTransID: string
+  messageVersion: string
+  challengeCompletionInd: string
+  messageType: string
+  acsTransID: string
+}
+
 export class NgeniusProvider implements IPaymentProvidable {
   public name: PayshiftProviderName = 'ngenius'
   public apiKey: string
@@ -508,6 +517,42 @@ export class NgeniusProvider implements IPaymentProvidable {
           Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify(clientInfo),
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        throw data
+      }
+
+      const data = await res.json()
+      return data
+    } catch (err) {
+      console.error(err)
+      throw err
+    }
+  }
+
+  async send3DS2ChallengeResponse(
+    outletId: string,
+    orderReference: string,
+    paymentReference: string,
+    challengeResponse: Ngenius3DS2ChallengeResponse,
+    testOnly = false
+  ) {
+    try {
+      const accessToken = await this.getAccessToken(testOnly)
+      const url = new URL(
+        `/transactions/outlets/${outletId}/orders/${orderReference}/payments/${paymentReference}/card/3ds2/challenge-response`,
+        this.getAPIHost(testOnly)
+      )
+
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/vnd.ni-payment.v2+json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify(challengeResponse),
       })
 
       if (!res.ok) {
