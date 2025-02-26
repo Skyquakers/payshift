@@ -231,12 +231,7 @@ export interface Ngenius3DS2Response {
 }
 
 export interface Ngenius3DS2ChallengeResponse {
-  transStatus: string
-  threeDSServerTransID: string
-  messageVersion: string
-  challengeCompletionInd: string
-  messageType: string
-  acsTransID: string
+  base64EncodedCRes: string
 }
 
 export class NgeniusProvider implements IPaymentProvidable {
