@@ -197,6 +197,44 @@ export interface NgeniusCapture {
   }
 }
 
+export interface NgeniusClientInfo {
+  deviceChannel: 'BRW' | 'APP'
+  threeDSCompInd: 'Y'
+  notificationURL: string
+  browserInfo: {
+    browserAcceptHeader: string
+    browserJavaEnabled: boolean
+    browserLanguage: string
+    browserTZ: string
+    browserUserAgent: string
+    browserColorDepth: string
+    browserScreenHeight: string
+    browserScreenWidth: string
+    browserJavascriptEnabled: boolean
+    browserIP: string
+    challengeWindowSize: string
+  }
+}
+
+export interface Ngenius3DS2Response {
+  '3ds2': {
+    eci: string
+    transStatus: string
+    messageVersion: string
+    acsReferenceNumber: string
+    threeDSMethodURL: string
+    threeDSServerTransID: string
+    acsURL: string
+    acsTransID: string
+    directoryServerID: string
+    base64EncodedCReq: string
+  }
+}
+
+export interface Ngenius3DS2ChallengeResponse {
+  base64EncodedCRes: string
+}
+
 export class NgeniusProvider implements IPaymentProvidable {
   public name: PayshiftProviderName = 'ngenius'
   public apiKey: string
@@ -440,6 +478,77 @@ export class NgeniusProvider implements IPaymentProvidable {
             currency: params.currency,
           },
         }),
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        throw data
+      }
+
+      const data = await res.json()
+      return data
+    } catch (err) {
+      console.error(err)
+      throw err
+    }
+  }
+
+  async sendClientInfoFor3DS(
+    outletId: string,
+    orderReference: string,
+    paymentReference: string,
+    clientInfo: NgeniusClientInfo,
+    testOnly = false
+  ): Promise<Ngenius3DS2Response> {
+    try {
+      const accessToken = await this.getAccessToken(testOnly)
+      const url = new URL(
+        `/transactions/outlets/${outletId}/orders/${orderReference}/payments/${paymentReference}/card/3ds2/authentications`,
+        this.getAPIHost(testOnly)
+      )
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/vnd.ni-payment.v2+json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify(clientInfo),
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        throw data
+      }
+
+      const data = await res.json()
+      return data
+    } catch (err) {
+      console.error(err)
+      throw err
+    }
+  }
+
+  async send3DS2ChallengeResponse(
+    outletId: string,
+    orderReference: string,
+    paymentReference: string,
+    challengeResponse: Ngenius3DS2ChallengeResponse,
+    testOnly = false
+  ) {
+    try {
+      const accessToken = await this.getAccessToken(testOnly)
+      const url = new URL(
+        `/transactions/outlets/${outletId}/orders/${orderReference}/payments/${paymentReference}/card/3ds2/challenge-response`,
+        this.getAPIHost(testOnly)
+      )
+
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/vnd.ni-payment.v2+json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify(challengeResponse),
       })
 
       if (!res.ok) {
