@@ -91,6 +91,7 @@ export interface NgeniusOrder {
         currencyCode: string
         value: number
       }
+      reference: string
       updateDateTime: string
       outletId: string
       orderReference: string
