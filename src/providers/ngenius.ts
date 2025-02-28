@@ -138,6 +138,9 @@ export interface NgeniusPayment {
     authorizationCode: string
     success: boolean
   }
+  '3ds'?: {
+    summaryText: string
+  }
 }
 
 export interface NgeniusCapture {
