@@ -17,6 +17,7 @@ npm install payshift
 - EPay
 - Multiple EPay instances with round robin algorithm to split your cashflow and risk
 - CCBill
+- N-Genius Payments
 
 ## Usage
 
