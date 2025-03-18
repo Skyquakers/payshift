@@ -1,15 +1,28 @@
 import express, { Express } from 'express'
-import { router as webhookRouter } from './routes/webhook'
-import { type PayshiftEvent, register, unregister } from './event-handler'
 import mongoose from 'mongoose'
-import { AlipayProvider, CCBillProvider, EPayProvider, FakaProvider, PaypalProvider, StripeProvider, WechatPayProvider } from './index'
-import { ChargeModel } from './models/charge'
 import {
-  ChargeCreateParams, ChargeObject, ChargeResponse,
-  IPaymentProvidable, PayshiftEventName, PayshiftOptions,
-  PayshiftProviderName } from './common'
+  ChargeCreateParams,
+  ChargeObject,
+  ChargeResponse,
+  IPaymentProvidable,
+  PayshiftEventName,
+  PayshiftOptions,
+  PayshiftProviderName,
+} from './common'
+import { type PayshiftEvent, register, unregister } from './event-handler'
+import {
+  AlipayProvider,
+  CCBillProvider,
+  EPayProvider,
+  FakaProvider,
+  PaypalProvider,
+  StripeProvider,
+  WechatPayProvider,
+} from './index'
+import { ChargeModel } from './models/charge'
 import { EPayClusterProvider } from './providers/epay-cluster'
-
+import { router as webhookRouter } from './routes/webhook'
+import { setDebugMode } from './utils'
 
 export class Payshift {
   public webserver: Express
@@ -19,12 +32,16 @@ export class Payshift {
   private webServerStarted: boolean
   private stripeEndpointSecret?: string
 
-  constructor (providers: IPaymentProvidable[] = [], options: PayshiftOptions = {}) {
+  constructor(
+    providers: IPaymentProvidable[] = [],
+    options: PayshiftOptions = {}
+  ) {
     this.providers = providers
     this.dbUsed = false
     this.webserver = express()
     this.webServerStarted = false
     this.stripeEndpointSecret = options.stripeEndpointSecret
+    setDebugMode(options.debug ?? false)
   }
 
   public getProvider(name: PayshiftProviderName): IPaymentProvidable {
@@ -37,10 +54,13 @@ export class Payshift {
     throw new Error(`no such provider ${name}`)
   }
 
-  public updateProvider(name: PayshiftProviderName, provider: IPaymentProvidable) {
+  public updateProvider(
+    name: PayshiftProviderName,
+    provider: IPaymentProvidable
+  ) {
     for (const [index, runningProvider] of this.providers.entries()) {
       if (runningProvider.name === name) {
-        return this.providers[index] = provider
+        return (this.providers[index] = provider)
       }
     }
 
@@ -48,7 +68,10 @@ export class Payshift {
     this.providers.push(provider)
   }
 
-  public async usedb(connectionString: string = 'mongodb://mongodb:27017/payshift', options?: mongoose.ConnectOptions): Promise<void> {
+  public async usedb(
+    connectionString: string = 'mongodb://mongodb:27017/payshift',
+    options?: mongoose.ConnectOptions
+  ): Promise<void> {
     return new Promise((resolve, reject) => {
       console.log('[payshift]: starting connecting to mongodb')
       const connection = mongoose.createConnection(connectionString, options)
@@ -74,7 +97,7 @@ export class Payshift {
     })
   }
 
-  public async startWebServer (hostname: string, localPort: number) {
+  public async startWebServer(hostname: string, localPort: number) {
     this.hostname = hostname
     for (const provider of this.providers.values()) {
       this.webserver.use((req, res, next) => {
@@ -108,7 +131,9 @@ export class Payshift {
 
     this.webserver.use('/webhooks', webhookRouter)
     this.webserver.listen(localPort)
-    console.log(`[payshift]: Payshift web server start listening on ${localPort}`)
+    console.log(
+      `[payshift]: Payshift web server start listening on ${localPort}`
+    )
 
     this.webserver.use(function (req, res, next) {
       res.locals.hostname = hostname
@@ -118,7 +143,10 @@ export class Payshift {
     this.webServerStarted = true
   }
 
-  public on(event: PayshiftEventName, callback: (event: PayshiftEvent, ...args: any) => Promise<void>) {
+  public on(
+    event: PayshiftEventName,
+    callback: (event: PayshiftEvent, ...args: any) => Promise<void>
+  ) {
     register(event, callback)
   }
 
@@ -126,7 +154,9 @@ export class Payshift {
     unregister(event, callback)
   }
 
-  public async createCharge (params: ChargeCreateParams): Promise<ChargeResponse> {
+  public async createCharge(
+    params: ChargeCreateParams
+  ): Promise<ChargeResponse> {
     try {
       const chargeObj: ChargeObject = {
         amount: params.amount,
@@ -135,7 +165,7 @@ export class Payshift {
         channel: params.channel,
         currency: params.currency,
         clientIp: params.clientIp,
-        userAgent: params.userAgent
+        userAgent: params.userAgent,
       }
 
       let chargeId: string | undefined = undefined
@@ -163,7 +193,7 @@ export class Payshift {
         }
       } else if (chargeObj.channel === 'alipay_web') {
         const provider = this.getProvider('alipay') as AlipayProvider
-        const url = await provider.createDesktopPaymentLink(params)
+        const url = provider.createDesktopPaymentLink(params)
         return {
           charge: chargeObj,
           data: url,
@@ -180,7 +210,10 @@ export class Payshift {
       } else if (chargeObj.channel === 'wechat_mobile_web') {
         const provider = this.getProvider('wechat_pay') as WechatPayProvider
         const url = this.hostname
-          ? await provider.createMobilePaymentLink(params, `${this.hostname}/webhooks/wechat_pay`)
+          ? await provider.createMobilePaymentLink(
+              params,
+              `${this.hostname}/webhooks/wechat_pay`
+            )
           : await provider.createMobilePaymentLink(params)
         return {
           charge: chargeObj,
@@ -190,27 +223,42 @@ export class Payshift {
       } else if (chargeObj.channel === 'wechat_qrcode') {
         const provider = this.getProvider('wechat_pay') as WechatPayProvider
         const url = this.hostname
-          ? await provider.createPaymentQrcodeUrl(params, `${this.hostname}/webhooks/wechat_pay`)
+          ? await provider.createPaymentQrcodeUrl(
+              params,
+              `${this.hostname}/webhooks/wechat_pay`
+            )
           : await provider.createPaymentQrcodeUrl(params)
         return {
           charge: chargeObj,
           data: url,
           chargeId,
         }
-      } else if (chargeObj.channel === 'epay_alipay' || chargeObj.channel === 'epay_wechat_pay') {
+      } else if (
+        chargeObj.channel === 'epay_alipay' ||
+        chargeObj.channel === 'epay_wechat_pay'
+      ) {
         const provider = this.getProvider('epay') as EPayProvider
         const result = this.hostname
-          ? await provider.createPayment(params, `${this.hostname}/webhooks/epay`)
+          ? await provider.createPayment(
+              params,
+              `${this.hostname}/webhooks/epay`
+            )
           : await provider.createPayment(params)
         return {
           charge: chargeObj,
           data: result,
           chargeId,
         }
-      } else if (chargeObj.channel === 'epay_cluster_alipay' || chargeObj.channel === 'epay_cluster_wechat_pay') {
+      } else if (
+        chargeObj.channel === 'epay_cluster_alipay' ||
+        chargeObj.channel === 'epay_cluster_wechat_pay'
+      ) {
         const provider = this.getProvider('epay_cluster') as EPayClusterProvider
         const result = this.hostname
-          ? await provider.createPayment(params, `${this.hostname}/webhooks/epay`)
+          ? await provider.createPayment(
+              params,
+              `${this.hostname}/webhooks/epay`
+            )
           : await provider.createPayment(params)
         return {
           charge: chargeObj,
@@ -221,12 +269,16 @@ export class Payshift {
         const channels = params.extras?.subProcessors ?? []
         const provider = this.getProvider('order2faka') as FakaProvider
         const result = this.hostname
-          ? await provider.createPayment(params, channels, `${this.hostname}/webhooks/faka`)
+          ? await provider.createPayment(
+              params,
+              channels,
+              `${this.hostname}/webhooks/faka`
+            )
           : await provider.createPayment(params)
         return {
           charge: chargeObj,
           data: result,
-          chargeId
+          chargeId,
         }
       } else if (chargeObj.channel === 'paypal') {
         const provider = this.getProvider('paypal') as PaypalProvider
@@ -247,7 +299,7 @@ export class Payshift {
         }
       }
 
-      throw new Error(`unknown channel ${chargeObj.channel}`) 
+      throw new Error(`unknown channel ${chargeObj.channel}`)
     } catch (err) {
       console.error(err)
       throw err

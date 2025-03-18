@@ -1,10 +1,11 @@
-import WxPay from 'wechatpay-node-v3'
 import { readFileSync } from 'fs'
+import WxPay from 'wechatpay-node-v3'
 import {
   ChargeCreateParams,
   IPaymentProvidable,
-  PayshiftProviderName } from '../common'
-
+  PayshiftProviderName,
+} from '../common'
+import { isDebugMode } from '../utils'
 
 export class WechatPayProvider implements IPaymentProvidable {
   public sdk: WxPay
@@ -12,7 +13,14 @@ export class WechatPayProvider implements IPaymentProvidable {
   public apiKey: string
   private notifyUrl?: string
 
-  constructor (appId: string, mchid: string, publicKeyPath: string, privateKeyPath: string, apikey: string, notifyUrl?: string) {
+  constructor(
+    appId: string,
+    mchid: string,
+    publicKeyPath: string,
+    privateKeyPath: string,
+    apikey: string,
+    notifyUrl?: string
+  ) {
     this.sdk = new WxPay({
       appid: appId,
       mchid,
@@ -24,7 +32,10 @@ export class WechatPayProvider implements IPaymentProvidable {
     this.apiKey = apikey
   }
 
-  public async createMobilePaymentLink (charge: ChargeCreateParams, notifyUrl?: string): Promise<string> {
+  public async createMobilePaymentLink(
+    charge: ChargeCreateParams,
+    notifyUrl?: string
+  ): Promise<string> {
     const params = {
       description: charge.title,
       out_trade_no: charge.outTradeNo,
@@ -41,19 +52,33 @@ export class WechatPayProvider implements IPaymentProvidable {
       },
     }
 
+    if (isDebugMode()) {
+      console.log('[payshift] wechat pay params', params)
+    }
+
     const result = await this.sdk.transactions_h5(params)
+
+    if (isDebugMode()) {
+      console.log('[payshift] wechat pay result', result)
+    }
+
     if (result.status === 200) {
       return result.h5_url
     }
 
     if (result.error) {
-      throw new Error(`wechat pay launch fails, code ${result.error.status} ${result.error.code}, ${result.error.message}`)      
+      throw new Error(
+        `wechat pay launch fails, code ${result.error.status} ${result.error.code}, ${result.error.message}`
+      )
     } else {
       throw new Error(`wechat pay launch fails, ${JSON.stringify(result)}`)
     }
   }
 
-  public async createPaymentQrcodeUrl (charge: ChargeCreateParams, notifyUrl?: string) {
+  public async createPaymentQrcodeUrl(
+    charge: ChargeCreateParams,
+    notifyUrl?: string
+  ) {
     const params = {
       description: charge.title,
       out_trade_no: charge.outTradeNo,
@@ -64,7 +89,7 @@ export class WechatPayProvider implements IPaymentProvidable {
       scene_info: {
         payer_client_ip: charge.clientIp,
       },
-    };
+    }
     const result = await this.sdk.transactions_native(params)
 
     if (result.status === 200) {
@@ -72,7 +97,9 @@ export class WechatPayProvider implements IPaymentProvidable {
     }
 
     if (result.error) {
-      throw new Error(`wechat pay launch fails, code ${result.error.status} ${result.error.code}, ${result.error.message}`)      
+      throw new Error(
+        `wechat pay launch fails, code ${result.error.status} ${result.error.code}, ${result.error.message}`
+      )
     } else {
       throw new Error(`wechat pay launch fails, ${JSON.stringify(result)}`)
     }

@@ -1,4 +1,6 @@
-import { CurrencyCode } from "./currency"
+import { CurrencyCode } from './currency'
+
+let debugMode = false
 
 const currencyCodeNumberMap = {
   [CurrencyCode.JPY]: 392,
@@ -15,9 +17,11 @@ const currencyCodeNumberMap = {
   36: CurrencyCode.AUD,
 }
 
-
-export const convertCurrencyCodeToNumber = (currency: CurrencyCode): number | null => {
-  const result = currencyCodeNumberMap[currency as keyof typeof currencyCodeNumberMap]
+export const convertCurrencyCodeToNumber = (
+  currency: CurrencyCode
+): number | null => {
+  const result =
+    currencyCodeNumberMap[currency as keyof typeof currencyCodeNumberMap]
   if (typeof result === 'string') {
     return null
   }
@@ -25,12 +29,22 @@ export const convertCurrencyCodeToNumber = (currency: CurrencyCode): number | nu
   return result
 }
 
-
-export const converNumberToCurrencyCode = (currencyNumber: number): CurrencyCode | undefined => {
-  const result = currencyCodeNumberMap[currencyNumber as keyof typeof currencyCodeNumberMap]
+export const converNumberToCurrencyCode = (
+  currencyNumber: number
+): CurrencyCode | undefined => {
+  const result =
+    currencyCodeNumberMap[currencyNumber as keyof typeof currencyCodeNumberMap]
   if (typeof result === 'number') {
     return undefined
   }
 
   return result
+}
+
+export const setDebugMode = (mode: boolean): void => {
+  debugMode = mode
+}
+
+export const isDebugMode = (): boolean => {
+  return debugMode
 }
