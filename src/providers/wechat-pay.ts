@@ -63,7 +63,7 @@ export class WechatPayProvider implements IPaymentProvidable {
     }
 
     if (result.status === 200) {
-      return result.h5_url
+      return result.data.h5_url
     }
 
     if (result.error) {
