@@ -1,5 +1,5 @@
 import bodyParser from 'body-parser'
-import { Router } from 'express'
+import { raw, Router } from 'express'
 import { onAlipayEvent } from '../controllers/webhook-alipay'
 import { onCCBillEvent } from '../controllers/webhook-ccbill'
 import { onEPayEvent } from '../controllers/webhook-epay'
@@ -19,11 +19,7 @@ router.post(
   bodyParser.raw({ type: 'application/json' }),
   onWechatPayEvent
 )
-router.post(
-  '/stripe',
-  bodyParser.raw({ type: 'application/json' }),
-  onStripeEvent
-)
+router.post('/stripe', raw({ type: 'application/json' }), onStripeEvent)
 router.get('/epay', onEPayEvent)
 router.post('/faka', bodyParser.raw({ type: 'application/json' }), onFakaEvent)
 router.post(

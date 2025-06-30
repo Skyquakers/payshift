@@ -9,18 +9,15 @@ export const onStripeEvent = async function (
 ) {
   const sig = req.headers['stripe-signature'] as string
   const sdk = res.locals.stripe?.sdk as Stripe
-  let event
+  let event: Stripe.Event
 
   try {
     if (!res.locals.endpointSecret) {
       throw new Error('no endpoint secret')
     }
 
-    // Ensure the body is a Buffer or string for Stripe verification
-    const rawBody = Buffer.isBuffer(req.body) ? req.body : Buffer.from(req.body)
-
-    event = await sdk.webhooks.constructEventAsync(
-      rawBody,
+    event = sdk.webhooks.constructEvent(
+      req.body,
       sig,
       res.locals.endpointSecret
     )
