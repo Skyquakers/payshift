@@ -16,7 +16,6 @@ export type ChargeCreateParams = {
   extras?: {
     subProcessors?: FakaSubProcessor[]
   }
-  payerAddress?: `0x${string}`
   recipientAddress?: `0x${string}`
 }
 
