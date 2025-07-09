@@ -112,7 +112,7 @@ export type PayshiftChannel =
   | 'paypal'
   | 'ccbill_web'
   | 'ngenius_web'
-  | 'peropay_web'
+  | 'peropay'
 
 export type PayshiftOptions = {
   usedb?: boolean

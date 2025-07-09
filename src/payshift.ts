@@ -298,7 +298,7 @@ export class Payshift {
           data: url,
           chargeId,
         }
-      } else if (chargeObj.channel === 'peropay_web') {
+      } else if (chargeObj.channel === 'peropay') {
         const provider = this.getProvider('peropay') as PeropayProvider
         const result = await provider.createPayment(
           params,
