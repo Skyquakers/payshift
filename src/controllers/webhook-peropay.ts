@@ -15,7 +15,7 @@ export const onPeropayEvent = async function (
       await trigger('charge.succeeded', {
         amount: order.usdcents / 100,
         tradeNo: order.id,
-        outTradeNo: order.id,
+        outTradeNo: order.outTradeNo,
         currency: CurrencyCode.USD,
         provider: 'peropay',
         name: 'charge.succeeded',
@@ -23,7 +23,7 @@ export const onPeropayEvent = async function (
 
       if (res.locals.dbUsed) {
         const event = new EventModel({
-          outTradeNo: order.id,
+          outTradeNo: order.outTradeNo,
           tradeNo: order.id,
           name: 'charge.succeeded',
           currency: CurrencyCode.USD,
