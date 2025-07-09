@@ -1,6 +1,10 @@
-import type { ChargeCreateParams, IPaymentProvidable, PayshiftProviderName } from '../common'
 import axios, { AxiosResponse } from 'axios'
 import { createHash } from 'crypto'
+import type {
+  ChargeCreateParams,
+  IPaymentProvidable,
+  PayshiftProviderName,
+} from '../common'
 
 export interface EPayPaymentResult {
   code: number
@@ -11,23 +15,29 @@ export interface EPayPaymentResult {
   urlscheme?: string
 }
 
-export type EPayType = 'alipay' | 'wxpay' | 'qqpay' | 'bank' | 'jdpay' | 'paypal'
+export type EPayType =
+  | 'alipay'
+  | 'wxpay'
+  | 'qqpay'
+  | 'bank'
+  | 'jdpay'
+  | 'paypal'
 
 type EPayDevice = 'pc' | 'mobile' | 'qq' | 'wechat' | 'alipay'
 
 export interface EPayPaymentParams {
-  pid: number,
-  type: EPayType,
-  out_trade_no: string,
-  notify_url: string,
-  return_url?: string,
-  name: string,
-  money: string,
-  clientip?: string,
-  device?: EPayDevice,
-  param?: string,
-  sign: string,
-  sign_type: 'MD5',
+  pid: number
+  type: EPayType
+  out_trade_no: string
+  notify_url: string
+  return_url?: string
+  name: string
+  money: string
+  clientip?: string
+  device?: EPayDevice
+  param?: string
+  sign: string
+  sign_type: 'MD5'
 }
 
 export type PresignedEPayPaymentParams = Omit<EPayPaymentParams, 'sign'>
@@ -38,17 +48,20 @@ export interface EPayMetaParams {
   return_url: string
 }
 
-export const sign = function(data: PresignedEPayPaymentParams, epayKey: string): string {
+export const sign = function (
+  data: PresignedEPayPaymentParams,
+  epayKey: string
+): string {
   const keys: (keyof PresignedEPayPaymentParams)[] = []
   let phrase: string = ''
 
   for (const key of Object.keys(data) as (keyof PresignedEPayPaymentParams)[]) {
     if (key !== 'sign_type' && data[key]) {
-      keys.push(key)      
+      keys.push(key)
     }
   }
 
-  for (const [index, key] of keys.sort().entries()) { 
+  for (const [index, key] of keys.sort().entries()) {
     phrase += `${key}=${data[key]}`
     if (index !== keys.length - 1) {
       phrase += '&'
@@ -60,7 +73,6 @@ export const sign = function(data: PresignedEPayPaymentParams, epayKey: string):
   return createHash('md5').update(phrase).digest('hex')
 }
 
-
 export class EPayProvider implements IPaymentProvidable {
   public name: PayshiftProviderName = 'epay'
   public pid: number
@@ -68,20 +80,23 @@ export class EPayProvider implements IPaymentProvidable {
   public endpoint: string
   private notifyUrl?: string
 
-  constructor (endpoint: string, pid: number, key: string, notifyUrl?: string) {
+  constructor(endpoint: string, pid: number, key: string, notifyUrl?: string) {
     this.pid = pid
     this.notifyUrl = notifyUrl
     this.key = key
     this.endpoint = endpoint
   }
-  
 
-  public async createPayment (
+  public async createPayment(
     charge: ChargeCreateParams,
-    notifyUrl?: string): Promise<Pick<EPayPaymentResult, 'payurl' | 'qrcode' | 'urlscheme'>> {
+    notifyUrl?: string
+  ): Promise<Pick<EPayPaymentResult, 'payurl' | 'qrcode' | 'urlscheme'>> {
     let type: EPayType | undefined = undefined
 
-    if (charge.channel === 'epay_alipay' || charge.channel === 'epay_cluster_alipay') {
+    if (
+      charge.channel === 'epay_alipay' ||
+      charge.channel === 'epay_cluster_alipay'
+    ) {
       type = 'alipay'
     } else {
       type = 'wxpay'
@@ -107,13 +122,13 @@ export class EPayProvider implements IPaymentProvidable {
       param: JSON.stringify({
         notify_url,
         clientip: charge.clientIp,
-        return_url: charge.returnUrl
-      })
+        return_url: charge.returnUrl,
+      }),
     }
 
     const finalData: EPayPaymentParams = {
       ...data,
-      sign: sign(data, this.key)
+      sign: sign(data, this.key),
     }
 
     const url = new URL(this.endpoint)
@@ -121,7 +136,9 @@ export class EPayProvider implements IPaymentProvidable {
       url.pathname = '/mapi.php'
     }
 
-    const unullableData: Record<string, string> = Object.entries(finalData).reduce((acc, [key, value]) => {
+    const unullableData: Record<string, string> = Object.entries(
+      finalData
+    ).reduce((acc, [key, value]) => {
       if (value !== undefined) {
         acc[key] = String(value)
       }
@@ -130,10 +147,10 @@ export class EPayProvider implements IPaymentProvidable {
 
     const formString = new URLSearchParams(unullableData).toString()
 
-    const res = await axios.post<EPayPaymentParams, AxiosResponse<EPayPaymentResult>>(
-      url.toString(),
-      formString
-    )
+    const res = await axios.post<
+      EPayPaymentParams,
+      AxiosResponse<EPayPaymentResult>
+    >(url.toString(), formString)
 
     if (res.data.code !== 1) {
       if (res.data.msg) {
@@ -142,7 +159,8 @@ export class EPayProvider implements IPaymentProvidable {
       throw new Error(JSON.stringify(res.data))
     }
 
-    const result: Pick<EPayPaymentResult, 'payurl' | 'qrcode' | 'urlscheme'> = {}
+    const result: Pick<EPayPaymentResult, 'payurl' | 'qrcode' | 'urlscheme'> =
+      {}
 
     if (res.data.urlscheme) {
       result.urlscheme = res.data.urlscheme
@@ -159,13 +177,16 @@ export class EPayProvider implements IPaymentProvidable {
     return result
   }
 
-
-  public async generateDesktopPaymentLink (
+  public async generateDesktopPaymentLink(
     charge: ChargeCreateParams,
-    notifyUrl?: string): Promise<string> {
+    notifyUrl?: string
+  ): Promise<string> {
     let type: EPayType | undefined = undefined
 
-    if (charge.channel === 'epay_alipay' || charge.channel === 'epay_cluster_alipay') {
+    if (
+      charge.channel === 'epay_alipay' ||
+      charge.channel === 'epay_cluster_alipay'
+    ) {
       type = 'alipay'
     } else {
       type = 'wxpay'
@@ -185,7 +206,7 @@ export class EPayProvider implements IPaymentProvidable {
 
     const finalData: EPayPaymentParams = {
       ...data,
-      sign: sign(data, this.key)
+      sign: sign(data, this.key),
     }
 
     const url = new URL('/submit.php', this.endpoint)

@@ -1,6 +1,6 @@
 {
   "name": "payshift",
-  "version": "1.6.6",
+  "version": "1.7.0",
   "description": "unified payment api for multiple payment processors",
   "main": "dist/src/index.js",
   "typings": "dist/src/index.d.ts",
@@ -13,13 +13,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "alipay-sdk": "^4.13.0",
+    "alipay-sdk": "^4.14.0",
     "axios": "^1.5.1",
     "body-parser": "^1.20.2",
     "express": "^4.18.2",
     "mongoose": "^7.6.2",
-    "stripe": "^11.18.0",
-    "wechatpay-node-v3": "^2.1.6"
+    "stripe": "^18.3.0",
+    "wechatpay-node-v3": "^2.2.1"
   },
   "devDependencies": {
     "@tsconfig/node16": "^1.0.3",
@@ -36,6 +36,6 @@
     "sinon": "^15.0.1",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.5",
-    "vitest": "^1.3.1"
+    "vitest": "^3.2.4"
   }
 }

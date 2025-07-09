@@ -1,26 +1,44 @@
-import { expect, describe, it } from "vitest"
-import { AlipayProvider, CurrencyCode, Payshift } from "../index"
+import { readFileSync } from 'fs'
 import path from 'path'
-import { appId, testReceiver, testPostData } from "../../certs/alipay/secret"
-import { readFileSync } from "fs"
+import { describe, expect, it } from 'vitest'
+import { appId, testPostData, testReceiver } from '../../certs/alipay/secret'
+import { AlipayProvider, CurrencyCode, Payshift } from '../index'
 
 export { appId }
-export const privateKeyPath = path.join(__filename, '../../../certs/alipay/private-key.pem')
-export const alipayPublicKeyPath = path.join(__filename, '../../../certs/alipay/alipay-public-key.crt')
+export const privateKeyPath = path.join(
+  __filename,
+  '../../../certs/alipay/private-key.pem'
+)
+export const alipayPublicKeyPath = path.join(
+  __filename,
+  '../../../certs/alipay/alipay-public-key.crt'
+)
 
-const alipayRootCertPath = path.join(__filename, '../../../certs/alipay/alipayRootCert.crt')
-const alipayPublicCertPath = path.join(__filename, '../../../certs/alipay/alipayCertPublicKey_RSA2.crt')
-const appCertPath = path.join(__filename, '../../../certs/alipay/appCertPublicKey.crt')
+const alipayRootCertPath = path.join(
+  __filename,
+  '../../../certs/alipay/alipayRootCert.crt'
+)
+const alipayPublicCertPath = path.join(
+  __filename,
+  '../../../certs/alipay/alipayCertPublicKey_RSA2.crt'
+)
+const appCertPath = path.join(
+  __filename,
+  '../../../certs/alipay/appCertPublicKey.crt'
+)
 const privateKey = readFileSync(privateKeyPath, 'ascii')
 
-const provider = new AlipayProvider({
-  appId,
-  signType: 'RSA2',
-  privateKey,
-  alipayRootCertPath,
-  alipayPublicCertPath,
-  appCertPath,
-}, 'http://www.taobao.com')
+const provider = new AlipayProvider(
+  {
+    appId,
+    signType: 'RSA2',
+    privateKey,
+    alipayRootCertPath,
+    alipayPublicCertPath,
+    appCertPath,
+  },
+  'http://www.taobao.com'
+)
 const payshift = new Payshift([provider])
 
 describe('AlipayProvider', function () {

@@ -1,6 +1,9 @@
-import type { ChargeCreateParams, IPaymentProvidable, PayshiftProviderName } from "../common";
-import { type EPayPaymentResult, EPayProvider } from "./epay";
-
+import type {
+  ChargeCreateParams,
+  IPaymentProvidable,
+  PayshiftProviderName,
+} from '../common'
+import { type EPayPaymentResult, EPayProvider } from './epay'
 
 export class EPayClusterProvider implements IPaymentProvidable {
   public name: PayshiftProviderName = 'epay_cluster'
@@ -8,15 +11,16 @@ export class EPayClusterProvider implements IPaymentProvidable {
   private readonly roundrobinMax: number
   private roundrobin: number
 
-  constructor (providers: EPayProvider[]) {
+  constructor(providers: EPayProvider[]) {
     this.providers = providers
     this.roundrobinMax = providers.length
     this.roundrobin = 0
   }
 
-  public async createPayment (
+  public async createPayment(
     charge: ChargeCreateParams,
-    notifyUrl?: string): Promise<Pick<EPayPaymentResult, 'payurl' | 'qrcode' | 'urlscheme'>> {
+    notifyUrl?: string
+  ): Promise<Pick<EPayPaymentResult, 'payurl' | 'qrcode' | 'urlscheme'>> {
     const provider = this.providers[this.roundrobin]
     this.roundrobin += 1
     this.roundrobin %= this.roundrobinMax
@@ -26,7 +30,8 @@ export class EPayClusterProvider implements IPaymentProvidable {
 
   public async generateDesktopPaymentLink(
     charge: ChargeCreateParams,
-    notifyUrl?: string): Promise<string> {
+    notifyUrl?: string
+  ): Promise<string> {
     const provider = this.providers[this.roundrobin]
     this.roundrobin += 1
     this.roundrobin %= this.roundrobinMax

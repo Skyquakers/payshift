@@ -1,17 +1,23 @@
-import { AlipaySdk } from "alipay-sdk"
-import { NextFunction, Request, Response } from "express"
-import { trigger } from "../event-handler"
-import { EventModel } from "../models/event"
-import { CurrencyCode } from "../currency"
+import { AlipaySdk } from 'alipay-sdk'
+import { NextFunction, Request, Response } from 'express'
 import { PayshiftEventName } from '../common'
+import { CurrencyCode } from '../currency'
+import { trigger } from '../event-handler'
+import { EventModel } from '../models/event'
 
-
-type AlipayNotifyStatus = 'TRADE_SUCCESS' | 'TRADE_FINISHED' | 'WAIT_BUYER_PAY' | 'TRADE_CLOSED'
-
+type AlipayNotifyStatus =
+  | 'TRADE_SUCCESS'
+  | 'TRADE_FINISHED'
+  | 'WAIT_BUYER_PAY'
+  | 'TRADE_CLOSED'
 
 // https://opendocs.alipay.com/open/203/105286
 // https://opendocs.alipay.com/support/01raw4
-export const onAlipayEvent = async function (req: Request, res: Response, next: NextFunction) {
+export const onAlipayEvent = async function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   console.log('[payshift]: onAlipayEvent')
 
   try {
@@ -40,14 +46,10 @@ export const onAlipayEvent = async function (req: Request, res: Response, next: 
 
     let settled = false
     let name: PayshiftEventName = 'charge.failed'
-  
+
     const data = req.body
 
-    const {
-      total_amount,
-      trade_no,
-      out_trade_no,
-      subject } = data
+    const { total_amount, trade_no, out_trade_no, subject } = data
     const status = data.trade_status as AlipayNotifyStatus
 
     const amount = Number(total_amount) * 100
@@ -75,7 +77,7 @@ export const onAlipayEvent = async function (req: Request, res: Response, next: 
         tradeNo: trade_no,
         amount,
       })
-      await event.save() 
+      await event.save()
     }
 
     res.status(200).send('success')

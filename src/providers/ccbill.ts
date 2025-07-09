@@ -1,8 +1,11 @@
-import type { ChargeCreateParams, IPaymentProvidable, PayshiftProviderName } from "../common"
-import { CurrencyCode } from "../currency"
-import { createHash } from "crypto"
-import { convertCurrencyCodeToNumber } from "../utils"
-
+import { createHash } from 'crypto'
+import type {
+  ChargeCreateParams,
+  IPaymentProvidable,
+  PayshiftProviderName,
+} from '../common'
+import { CurrencyCode } from '../currency'
+import { convertCurrencyCodeToNumber } from '../utils'
 
 export class CCBillProvider implements IPaymentProvidable {
   public name: PayshiftProviderName = 'ccbill'
@@ -10,13 +13,13 @@ export class CCBillProvider implements IPaymentProvidable {
   public salt: string
   private flexId: string
 
-  constructor (subAccountId: string, salt: string, flexId: string) {
+  constructor(subAccountId: string, salt: string, flexId: string) {
     this.subAccountId = subAccountId
     this.salt = salt
     this.flexId = flexId
   }
 
-  private getAPIHost (): string {
+  private getAPIHost(): string {
     if (process.env.NODE_ENV === 'production') {
       return 'https://api.ccbill.com'
     } else {
@@ -24,27 +27,41 @@ export class CCBillProvider implements IPaymentProvidable {
     }
   }
 
-  public generateFlexformDigest (initialPrice: string, initialPeriod: string, currencyCode: number, recurringPrice?: string, recurringPeriod?: string): string {
+  public generateFlexformDigest(
+    initialPrice: string,
+    initialPeriod: string,
+    currencyCode: number,
+    recurringPrice?: string,
+    recurringPeriod?: string
+  ): string {
     if (!recurringPrice || !recurringPeriod) {
       const passpharse = `${initialPrice}${initialPeriod}${currencyCode}${this.salt}`
-      return createHash('md5').update(passpharse).digest('hex')      
+      return createHash('md5').update(passpharse).digest('hex')
     }
 
-    const passpharse = `${initialPrice}${initialPeriod}${recurringPrice}${recurringPeriod}${'99'}${currencyCode}${this.salt}`
+    const passpharse = `${initialPrice}${initialPeriod}${recurringPrice}${recurringPeriod}${'99'}${currencyCode}${
+      this.salt
+    }`
     return createHash('md5').update(passpharse).digest('hex')
   }
 
-  public generateDynamicPricingValidationDigest (approved: boolean, subscriptionOrDenialId: string): string {
+  public generateDynamicPricingValidationDigest(
+    approved: boolean,
+    subscriptionOrDenialId: string
+  ): string {
     const middle = approved ? 1 : 0
     const passpharse = `${subscriptionOrDenialId}${middle}${this.salt}`
     return createHash('md5').update(passpharse).digest('hex')
   }
 
-  public createDesktopPaymentLink (charge: ChargeCreateParams): string {
+  public createDesktopPaymentLink(charge: ChargeCreateParams): string {
     const url = new URL(this.getAPIHost())
     url.pathname = `/wap-frontflex/flexforms/${this.flexId}`
     url.searchParams.append('clientSubacc', this.subAccountId)
-    const value = charge.currency === CurrencyCode.JPY ? `${String(charge.amount)}.00` : (charge.amount / 100).toFixed(2)
+    const value =
+      charge.currency === CurrencyCode.JPY
+        ? `${String(charge.amount)}.00`
+        : (charge.amount / 100).toFixed(2)
     url.searchParams.append('initialPrice', value)
     url.searchParams.append('initialPeriod', '30')
 
@@ -57,7 +74,7 @@ export class CCBillProvider implements IPaymentProvidable {
     const digest = this.generateFlexformDigest(
       url.searchParams.get('initialPrice') as string,
       url.searchParams.get('initialPeriod') as string,
-      currencyNumber,
+      currencyNumber
     )
     url.searchParams.append('formDigest', digest)
     url.searchParams.append('outTradeNo', charge.outTradeNo)
@@ -66,11 +83,18 @@ export class CCBillProvider implements IPaymentProvidable {
     return url.toString()
   }
 
-  public createSubscriptionLink (charge: ChargeCreateParams, initialPeriodInDays: number, recurringPeriodInDays: number): string {
+  public createSubscriptionLink(
+    charge: ChargeCreateParams,
+    initialPeriodInDays: number,
+    recurringPeriodInDays: number
+  ): string {
     const url = new URL(this.getAPIHost())
     url.pathname = `/wap-frontflex/flexforms/${this.flexId}`
     url.searchParams.append('clientSubacc', this.subAccountId)
-    const value = charge.currency === CurrencyCode.JPY ? `${String(charge.amount)}.00` : (charge.amount / 100).toFixed(2)
+    const value =
+      charge.currency === CurrencyCode.JPY
+        ? `${String(charge.amount)}.00`
+        : (charge.amount / 100).toFixed(2)
     url.searchParams.append('initialPrice', value)
     url.searchParams.append('recurringPrice', value)
     url.searchParams.append('initialPeriod', String(initialPeriodInDays))
@@ -88,7 +112,7 @@ export class CCBillProvider implements IPaymentProvidable {
       url.searchParams.get('initialPeriod') as string,
       currencyNumber,
       url.searchParams.get('recurringPrice') as string,
-      url.searchParams.get('recurringPeriod') as string,
+      url.searchParams.get('recurringPeriod') as string
     )
     url.searchParams.append('formDigest', digest)
     url.searchParams.append('outTradeNo', charge.outTradeNo)
@@ -96,4 +120,4 @@ export class CCBillProvider implements IPaymentProvidable {
 
     return url.toString()
   }
-} 
+}

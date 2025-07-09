@@ -7,6 +7,7 @@ export { EPayClusterProvider } from './providers/epay-cluster'
 export { FakaProvider } from './providers/faka'
 export { NgeniusProvider } from './providers/ngenius'
 export { PaypalProvider } from './providers/paypal'
+export { PeropayProvider } from './providers/peropay'
 export { StripeProvider } from './providers/stripe'
 export { WechatPayProvider } from './providers/wechat-pay'
 

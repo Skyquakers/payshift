@@ -1,7 +1,6 @@
-import { expect, beforeEach, it, describe } from "vitest"
-import { StripeProvider } from "../index"
-import { testKey } from "../../certs/stripe/secret"
-
+import { beforeEach, describe, expect, it } from 'vitest'
+import { testKey } from '../../certs/stripe/secret'
+import { StripeProvider } from '../index'
 
 const provider = new StripeProvider(testKey)
 
@@ -21,10 +20,14 @@ describe('StripeProvider', function () {
       country: 'JP',
       type: 'express',
       business_type: 'individual',
-      capabilities: { transfers: { requested: true }},
+      capabilities: { transfers: { requested: true } },
       tos_acceptance: { service_agreement: 'recipient' },
     })
-    const url = await provider.createAccountLink(accountId, 'http://taobao.com', 'http://taobao.com')
+    const url = await provider.createAccountLink(
+      accountId,
+      'http://taobao.com',
+      'http://taobao.com'
+    )
     console.log(url)
     expect(url).to.be.a('string')
   })

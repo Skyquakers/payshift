@@ -1,10 +1,10 @@
 import 'express'
-import type { StripeProvider } from './providers/stripe';
-import type { WechatPayProvider } from './providers/wechat-pay';
-import type { EPayProvider } from './providers/epay';
-import type { AlipayProvider } from './providers/alipay';
-import type { FakaProvider } from './providers/faka';
-import { CCBillProvider } from './providers/ccbill';
+import type { AlipayProvider } from './providers/alipay'
+import { CCBillProvider } from './providers/ccbill'
+import type { EPayProvider } from './providers/epay'
+import type { FakaProvider } from './providers/faka'
+import type { StripeProvider } from './providers/stripe'
+import type { WechatPayProvider } from './providers/wechat-pay'
 
 interface PayshiftLocals {
   stripe?: StripeProvider
@@ -18,7 +18,7 @@ interface PayshiftLocals {
 }
 
 declare module 'express' {
-  export interface Response  {
-    locals: PayshiftLocals;
+  export interface Response {
+    locals: PayshiftLocals
   }
 }

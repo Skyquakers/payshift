@@ -94,6 +94,7 @@ export type PayshiftProviderName =
   | 'order2faka'
   | 'ccbill'
   | 'ngenius'
+  | 'peropay'
 
 export type PayshiftChannel =
   | 'stripe_web'

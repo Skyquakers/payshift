@@ -1,9 +1,13 @@
-import { type AlipaySdkCommonResult, AlipaySdkConfig, AlipaySdk } from "alipay-sdk"
 import {
+  AlipaySdk,
+  type AlipaySdkCommonResult,
+  AlipaySdkConfig,
+} from 'alipay-sdk'
+import {
+  AlipayTransferParams,
   ChargeCreateParams,
   IPaymentProvidable,
   PayshiftProviderName,
-  AlipayTransferParams
 } from '../common'
 
 export class AlipayProvider implements IPaymentProvidable {
@@ -11,12 +15,12 @@ export class AlipayProvider implements IPaymentProvidable {
   public name: PayshiftProviderName = 'alipay'
   private notifyUrl?: string
 
-  constructor (config: AlipaySdkConfig, notifyUrl?: string) {
+  constructor(config: AlipaySdkConfig, notifyUrl?: string) {
     this.sdk = new AlipaySdk(config)
     this.notifyUrl = notifyUrl
   }
 
-  public createDesktopPaymentLink (params: ChargeCreateParams): string {
+  public createDesktopPaymentLink(params: ChargeCreateParams): string {
     const data: any = {
       method: 'GET',
       bizContent: {
@@ -36,7 +40,9 @@ export class AlipayProvider implements IPaymentProvidable {
     return result
   }
 
-  public async createMobilePaymentLink (params: ChargeCreateParams): Promise<string> {
+  public async createMobilePaymentLink(
+    params: ChargeCreateParams
+  ): Promise<string> {
     const data: any = {
       method: 'GET',
       bizContent: {
@@ -55,7 +61,9 @@ export class AlipayProvider implements IPaymentProvidable {
     return result
   }
 
-  public async transfer(params: AlipayTransferParams): Promise<AlipaySdkCommonResult> {
+  public async transfer(
+    params: AlipayTransferParams
+  ): Promise<AlipaySdkCommonResult> {
     const data: any = {
       bizContent: {
         out_biz_no: params.outTradeNo,
@@ -66,10 +74,10 @@ export class AlipayProvider implements IPaymentProvidable {
         payee_info: {
           identity: params.receiver.id,
           identity_type: params.receiver.type,
-          name: params.receiver.name
+          name: params.receiver.name,
         },
-        remark: params.title
-      }
+        remark: params.title,
+      },
     }
 
     const result = await this.sdk.exec('alipay.fund.trans.uni.transfer', data)

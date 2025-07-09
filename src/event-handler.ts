@@ -1,23 +1,25 @@
-import { PayshiftEventName, PayshiftProviderName } from "./common"
-import { CurrencyCode } from "./currency"
+import { PayshiftEventName, PayshiftProviderName } from './common'
+import { CurrencyCode } from './currency'
 
-export const callbacks:  Map<string, Function[]> = new Map()
+export const callbacks: Map<string, Function[]> = new Map()
 
 export type PayshiftEvent = {
-  amount?: number, // in cents
-  title?: string,
-  outTradeNo?: string,
-  tradeNo?: string,
-  provider: PayshiftProviderName,
-  name: PayshiftEventName,
-  currency?: CurrencyCode,
-  accountId?: string,
-  settled?: boolean,
+  amount?: number // in cents
+  title?: string
+  outTradeNo?: string
+  tradeNo?: string
+  provider: PayshiftProviderName
+  name: PayshiftEventName
+  currency?: CurrencyCode
+  accountId?: string
+  settled?: boolean
   createdAt?: Date
 }
 
-
-export const register = function (event: PayshiftEventName, callback: Function) {
+export const register = function (
+  event: PayshiftEventName,
+  callback: Function
+) {
   const fns = callbacks.get(event)
   if (fns) {
     fns.push(callback)
@@ -26,20 +28,25 @@ export const register = function (event: PayshiftEventName, callback: Function) 
   }
 }
 
-
-export const trigger = async function (event: PayshiftEventName, object: PayshiftEvent, ...args: any[]) {
+export const trigger = async function (
+  event: PayshiftEventName,
+  object: PayshiftEvent,
+  ...args: any[]
+) {
   const fns = callbacks.get(event)
   if (fns) {
     const promises: Promise<void>[] = []
-    fns.forEach(async fn => {
+    fns.forEach(async (fn) => {
       promises.push(fn.call(null, object, ...args))
     })
     await Promise.all(promises)
   }
 }
 
-
-export const unregister = function (event: PayshiftEventName, callback: Function) {
+export const unregister = function (
+  event: PayshiftEventName,
+  callback: Function
+) {
   const fns = callbacks.get(event)
   if (fns) {
     const index = fns.indexOf(callback)

@@ -1,6 +1,6 @@
-import { salt, subAccountId, flexId } from '../../certs/ccbill/secret'
-import { CCBillProvider, Payshift, CurrencyCode } from '../index'
-import { expect, describe, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
+import { flexId, salt, subAccountId } from '../../certs/ccbill/secret'
+import { CCBillProvider, CurrencyCode, Payshift } from '../index'
 
 const provider = new CCBillProvider(subAccountId, salt, flexId)
 const payshift = new Payshift([provider])
@@ -31,16 +31,20 @@ describe('CCBillProvider', function () {
     const subject = 'abc'
     const body = '234'
     const total_amount = 295
-    const url = provider.createSubscriptionLink({
-      outTradeNo: out_trade_no,
-      title: subject,
-      description: body,
-      amount: total_amount,
-      channel: 'ccbill_web',
-      currency: CurrencyCode.USD,
-      returnUrl: 'http://taobao.com',
-      clientIp: '127.0.0.1',
-    }, 30, 30)
+    const url = provider.createSubscriptionLink(
+      {
+        outTradeNo: out_trade_no,
+        title: subject,
+        description: body,
+        amount: total_amount,
+        channel: 'ccbill_web',
+        currency: CurrencyCode.USD,
+        returnUrl: 'http://taobao.com',
+        clientIp: '127.0.0.1',
+      },
+      30,
+      30
+    )
     console.log(url)
     expect(url).to.be.a('string')
   })

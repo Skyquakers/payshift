@@ -1,13 +1,17 @@
-import { NextFunction, Request, Response } from "express"
-import { trigger } from "../event-handler"
-import { EventModel } from "../models/event"
-import { PayshiftEventName } from "../common"
-import { createHash } from "crypto"
+import { createHash } from 'crypto'
+import { NextFunction, Request, Response } from 'express'
+import { PayshiftEventName } from '../common'
+import { trigger } from '../event-handler'
+import { EventModel } from '../models/event'
 
-
-export const onFakaEvent = async function (req: Request, res: Response, next: NextFunction) {
+export const onFakaEvent = async function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
-    const { outTradeNo, merchantKeyHash, tradeNo, currency, title, amount } = req.body
+    const { outTradeNo, merchantKeyHash, tradeNo, currency, title, amount } =
+      req.body
     const name: PayshiftEventName = 'charge.succeeded'
 
     const faka = res.locals.faka
@@ -16,7 +20,9 @@ export const onFakaEvent = async function (req: Request, res: Response, next: Ne
       throw new Error('no faka in res.locals')
     }
 
-    const keyHash = createHash('md5').update(`${outTradeNo}${faka.key}`).digest('hex')
+    const keyHash = createHash('md5')
+      .update(`${outTradeNo}${faka.key}`)
+      .digest('hex')
 
     if (keyHash !== merchantKeyHash) {
       return res.status(401).send('mismatch')
