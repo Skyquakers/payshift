@@ -4,6 +4,7 @@ import { onAlipayEvent } from '../controllers/webhook-alipay'
 import { onCCBillEvent } from '../controllers/webhook-ccbill'
 import { onEPayEvent } from '../controllers/webhook-epay'
 import { onFakaEvent } from '../controllers/webhook-faka'
+import { onPeropayEvent } from '../controllers/webhook-peropay'
 import { onStripeEvent } from '../controllers/webhook-stripe'
 import { onWechatPayEvent } from '../controllers/webhook-wechatpay'
 
@@ -26,4 +27,9 @@ router.post(
   '/ccbill',
   bodyParser.raw({ type: 'application/json' }),
   onCCBillEvent
+)
+router.post(
+  '/peropay',
+  bodyParser.raw({ type: 'application/json' }),
+  onPeropayEvent
 )

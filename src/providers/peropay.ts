@@ -64,20 +64,19 @@ export class PeropayProvider implements IPaymentProvidable {
     return data
   }
 
-  public async createPayment(
-    params: ChargeCreateParams,
-    notifyUrl: string,
-    payerAddress: string,
-    recipientAddress: string
-  ) {
+  public async createPayment(params: ChargeCreateParams, notifyUrl: string) {
     if (params.currency !== CurrencyCode.USD) {
       throw new Error('Peropay only supports USD')
     }
 
+    if (!params.payerAddress || !params.recipientAddress) {
+      throw new Error('Payer and recipient addresses are required')
+    }
+
     const order = await this.createOrder({
-      payerAddress,
-      recipientAddress,
-      usdcents: params.amount * 100,
+      payerAddress: params.payerAddress,
+      recipientAddress: params.recipientAddress,
+      usdcents: params.amount,
       notifyUrl,
       outTradeNo: params.outTradeNo,
     })
