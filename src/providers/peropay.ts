@@ -1,10 +1,16 @@
-import { IPaymentProvidable, PayshiftProviderName } from '../common'
+import {
+  ChargeCreateParams,
+  IPaymentProvidable,
+  PayshiftProviderName,
+} from '../common'
+import { CurrencyCode } from '../currency'
 
 interface PeropayOrderDTO {
   usdcents: number
   notifyUrl: string
   payerAddress: string
   recipientAddress: string
+  outTradeNo: string
 }
 
 export interface PeropayOrder {
@@ -18,6 +24,7 @@ export interface PeropayOrder {
   updatedAt: Date
   orderWalletAddress?: `0x${string}`
   recipientAddress: `0x${string}`
+  outTradeNo: string
 }
 
 interface PeropayQuote {
@@ -57,18 +64,47 @@ export class PeropayProvider implements IPaymentProvidable {
     return data
   }
 
-  async createOrder(
+  public async createPayment(
+    params: ChargeCreateParams,
+    notifyUrl: string,
     payerAddress: string,
-    recipientAddress: string,
-    usdcents: number,
-    notifyUrl: string
+    recipientAddress: string
   ) {
+    if (params.currency !== CurrencyCode.USD) {
+      throw new Error('Peropay only supports USD')
+    }
+
+    const order = await this.createOrder({
+      payerAddress,
+      recipientAddress,
+      usdcents: params.amount * 100,
+      notifyUrl,
+      outTradeNo: params.outTradeNo,
+    })
+
+    return order
+  }
+
+  private async createOrder({
+    payerAddress,
+    recipientAddress,
+    usdcents,
+    notifyUrl,
+    outTradeNo,
+  }: {
+    payerAddress: string
+    recipientAddress: string
+    usdcents: number
+    notifyUrl: string
+    outTradeNo: string
+  }) {
     const url = new URL('/orders', this.endpoint).toString()
     const order: PeropayOrderDTO = {
       usdcents,
       notifyUrl: notifyUrl,
       payerAddress: payerAddress,
       recipientAddress: recipientAddress,
+      outTradeNo,
     }
 
     const res = await fetch(url, {
