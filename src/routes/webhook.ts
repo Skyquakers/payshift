@@ -28,8 +28,4 @@ router.post(
   bodyParser.raw({ type: 'application/json' }),
   onCCBillEvent
 )
-router.post(
-  '/peropay',
-  bodyParser.raw({ type: 'application/json' }),
-  onPeropayEvent
-)
+router.post('/peropay', bodyParser.json(), onPeropayEvent)

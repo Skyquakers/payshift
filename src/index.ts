@@ -1,4 +1,5 @@
 export { CurrencyCode } from './currency'
+export { register, trigger, unregister } from './event-handler'
 export { Payshift } from './payshift'
 export { AlipayProvider } from './providers/alipay'
 export { CCBillProvider } from './providers/ccbill'

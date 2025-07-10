@@ -38,6 +38,8 @@ export const onPeropayEvent = async function (
 
       return res.status(200).send('success')
     }
+
+    return res.status(400).send('order is not paid')
   } catch (err) {
     console.log('[payshift]: error occured in peropay event:')
     console.error(err)
