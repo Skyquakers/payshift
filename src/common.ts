@@ -16,6 +16,7 @@ export type ChargeCreateParams = {
   extras?: {
     subProcessors?: FakaSubProcessor[]
   }
+  recipientAddress?: `0x${string}`
 }
 
 export type FakaSubProcessor = 'alipay' | 'wechat_pay' | 'stripe_web' | 'paypal'
@@ -110,6 +111,7 @@ export type PayshiftChannel =
   | 'paypal'
   | 'ccbill_web'
   | 'ngenius_web'
+  | 'peropay'
 
 export type PayshiftOptions = {
   usedb?: boolean

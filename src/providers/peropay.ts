@@ -8,8 +8,7 @@ import { CurrencyCode } from '../currency'
 interface PeropayOrderDTO {
   usdcents: number
   notifyUrl: string
-  payerAddress: string
-  recipientAddress: string
+  recipientAddress: `0x${string}`
   outTradeNo: string
 }
 
@@ -17,7 +16,6 @@ export interface PeropayOrder {
   id: string
   usdcents: number
   peroAmount: bigint
-  payerAddress: `0x${string}`
   notifyUrl: string
   status: 'pending' | 'paid' | 'expired'
   createdAt: Date
@@ -64,20 +62,18 @@ export class PeropayProvider implements IPaymentProvidable {
     return data
   }
 
-  public async createPayment(
-    params: ChargeCreateParams,
-    notifyUrl: string,
-    payerAddress: string,
-    recipientAddress: string
-  ) {
+  public async createPayment(params: ChargeCreateParams, notifyUrl: string) {
     if (params.currency !== CurrencyCode.USD) {
       throw new Error('Peropay only supports USD')
     }
 
+    if (!params.recipientAddress) {
+      throw new Error('Recipient address is required')
+    }
+
     const order = await this.createOrder({
-      payerAddress,
-      recipientAddress,
-      usdcents: params.amount * 100,
+      recipientAddress: params.recipientAddress,
+      usdcents: params.amount,
       notifyUrl,
       outTradeNo: params.outTradeNo,
     })
@@ -86,14 +82,12 @@ export class PeropayProvider implements IPaymentProvidable {
   }
 
   private async createOrder({
-    payerAddress,
     recipientAddress,
     usdcents,
     notifyUrl,
     outTradeNo,
   }: {
-    payerAddress: string
-    recipientAddress: string
+    recipientAddress: `0x${string}`
     usdcents: number
     notifyUrl: string
     outTradeNo: string
@@ -102,7 +96,6 @@ export class PeropayProvider implements IPaymentProvidable {
     const order: PeropayOrderDTO = {
       usdcents,
       notifyUrl: notifyUrl,
-      payerAddress: payerAddress,
       recipientAddress: recipientAddress,
       outTradeNo,
     }

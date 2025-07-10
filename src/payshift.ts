@@ -16,6 +16,7 @@ import {
   EPayProvider,
   FakaProvider,
   PaypalProvider,
+  PeropayProvider,
   StripeProvider,
   WechatPayProvider,
 } from './index'
@@ -295,6 +296,17 @@ export class Payshift {
         return {
           charge: chargeObj,
           data: url,
+          chargeId,
+        }
+      } else if (chargeObj.channel === 'peropay') {
+        const provider = this.getProvider('peropay') as PeropayProvider
+        const result = await provider.createPayment(
+          params,
+          `${this.hostname}/webhooks/peropay`
+        )
+        return {
+          charge: chargeObj,
+          data: result,
           chargeId,
         }
       }

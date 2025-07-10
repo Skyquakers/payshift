@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
+import { PayshiftEventName } from '../common'
 import { CurrencyCode } from '../currency'
 import { trigger } from '../event-handler'
 import { EventModel } from '../models/event'
@@ -11,21 +12,22 @@ export const onPeropayEvent = async function (
 ) {
   try {
     const order: PeropayOrder = req.body
+    const eventName: PayshiftEventName = 'charge.succeeded'
     if (order.status === 'paid') {
-      await trigger('charge.succeeded', {
-        amount: order.usdcents / 100,
+      await trigger(eventName, {
+        amount: order.usdcents,
         tradeNo: order.id,
         outTradeNo: order.outTradeNo,
         currency: CurrencyCode.USD,
         provider: 'peropay',
-        name: 'charge.succeeded',
+        name: eventName,
       })
 
       if (res.locals.dbUsed) {
         const event = new EventModel({
           outTradeNo: order.outTradeNo,
           tradeNo: order.id,
-          name: 'charge.succeeded',
+          name: eventName,
           currency: CurrencyCode.USD,
           provider: 'peropay',
           title: 'Peropay Payment',
