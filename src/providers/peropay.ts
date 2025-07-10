@@ -109,7 +109,8 @@ export class PeropayProvider implements IPaymentProvidable {
     })
 
     if (!res.ok) {
-      throw new Error('Failed to create order')
+      const data = await res.json()
+      throw new Error(data.message)
     }
 
     const data: PeropayOrder = await res.json()
