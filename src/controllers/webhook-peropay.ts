@@ -14,14 +14,18 @@ export const onPeropayEvent = async function (
     const order: PeropayOrder = req.body
     const eventName: PayshiftEventName = 'charge.succeeded'
     if (order.status === 'paid') {
-      await trigger(eventName, {
-        amount: order.usdcents,
-        tradeNo: order.id,
-        outTradeNo: order.outTradeNo,
-        currency: CurrencyCode.USD,
-        provider: 'peropay',
-        name: eventName,
-      })
+      await trigger(
+        eventName,
+        {
+          amount: order.usdcents,
+          tradeNo: order.id,
+          outTradeNo: order.outTradeNo,
+          currency: CurrencyCode.USD,
+          provider: 'peropay',
+          name: eventName,
+        },
+        order
+      )
 
       if (res.locals.dbUsed) {
         const event = new EventModel({
