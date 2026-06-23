@@ -48,6 +48,53 @@ export interface EPayMetaParams {
   return_url: string
 }
 
+const getLastPathSegment = function (pathname: string): string | undefined {
+  return pathname.split('/').filter(Boolean).pop()
+}
+
+const isPhpScriptPath = function (pathname: string): boolean {
+  const lastSegment = getLastPathSegment(pathname)
+
+  return Boolean(lastSegment?.endsWith('.php'))
+}
+
+const appendScriptPath = function (pathname: string, scriptName: string): string {
+  if (pathname === '/' || pathname === '') {
+    return `/${scriptName}`
+  }
+
+  if (pathname.endsWith('/')) {
+    return `${pathname}${scriptName}`
+  }
+
+  return `${pathname}/${scriptName}`
+}
+
+export const resolveEPayApiUrl = function (endpoint: string): URL {
+  const url = new URL(endpoint)
+
+  if (!isPhpScriptPath(url.pathname)) {
+    url.pathname = appendScriptPath(url.pathname, 'mapi.php')
+  }
+
+  return url
+}
+
+export const resolveEPaySubmitUrl = function (endpoint: string): URL {
+  const url = new URL(endpoint)
+
+  if (!isPhpScriptPath(url.pathname)) {
+    url.pathname = appendScriptPath(url.pathname, 'submit.php')
+    return url
+  }
+
+  const segments = url.pathname.split('/')
+  segments[segments.length - 1] = 'submit.php'
+  url.pathname = segments.join('/')
+
+  return url
+}
+
 export const sign = function (
   data: PresignedEPayPaymentParams,
   epayKey: string
@@ -131,10 +178,7 @@ export class EPayProvider implements IPaymentProvidable {
       sign: sign(data, this.key),
     }
 
-    const url = new URL(this.endpoint)
-    if (url.pathname === '/') {
-      url.pathname = '/mapi.php'
-    }
+    const url = resolveEPayApiUrl(this.endpoint)
 
     const unullableData: Record<string, string> = Object.entries(
       finalData
@@ -209,7 +253,7 @@ export class EPayProvider implements IPaymentProvidable {
       sign: sign(data, this.key),
     }
 
-    const url = new URL('/submit.php', this.endpoint)
+    const url = resolveEPaySubmitUrl(this.endpoint)
 
     for (const [key, value] of Object.entries(finalData)) {
       url.searchParams.set(key, value)
