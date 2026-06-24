@@ -32,13 +32,13 @@ export const onEPayEvent = async function (
       param,
     } = req.query
 
-    const paramString = param as string
-    if (paramString.slice(-1) !== encodeURIComponent('}')) {
+    const paramString = typeof param === 'string' ? param : undefined
+    if (!paramString || paramString.slice(-1) !== encodeURIComponent('}')) {
       if (!dangerouslySkipVerify) {
         return res.status(401).json('sign check error')
       }
     } else {
-      const unescaped = decodeURIComponent(param as string)
+      const unescaped = decodeURIComponent(paramString)
         .replaceAll('\\&quot;', '"')
         .replace('\\&', '"')
       const meta = JSON.parse(unescaped) as EPayMetaParams
@@ -63,7 +63,7 @@ export const onEPayEvent = async function (
           device: 'pc',
           sign_type: 'MD5',
           type: type as EPayType,
-          param: param as string,
+          param: paramString,
         }
 
         for (const epay of res.locals.epays.values()) {
